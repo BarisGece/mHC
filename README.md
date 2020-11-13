@@ -41,7 +41,47 @@ It is an Open Source **Server Virtualization Platform**. *Proxmox-VE* includes t
   * `apt update && apt upgrade -y && apt dist-upgrade`
 * **RESTART/REBOOT** System
 
-[PVE-ISO]:             https://www.proxmox.com/en/downloads/category/iso-images-pve
-[Etcher]:              https://www.balena.io/etcher/
-[PVE-Installation]:    https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_installation
-[PVE-LVM_Options]:     https://pve.proxmox.com/pve-docs/pve-admin-guide.html#advanced_lvm_options
+### Installation - Script Step - Creating cloud-init Template
+
+To create cloud-init template(s) `create-template-via-cloudinit.sh` should be executed on Proxmox-VE Server(s). The script is based on the [create-cloud-template.sh][chriswayg-gist] developed by [chriswayg][chriswayg].
+
+|  No | `create-template-via-cloudinit.sh` Execution Prerequisites |
+| :-- | :--------------------------------------------------------- |
+|  1  |`create-template-via-cloudinit.sh` should be executed on a Proxmox VE 6.x Server. |
+|  2  |A DHCP Server should be active on `vmbr0`. |
+|  3  | **Download Latest Version of the Script on Proxmox VE Server:**<br> `curl https://raw.githubusercontent.com/BarisGece/mHC/main/proxmox-ve/create-template-via-cloudinit.sh > /usr/local/bin/create-template-via-cloudinit.sh && chmod -v +x /usr/local/bin/create-template-via-cloudinit.sh` |
+|  4  | (optionally) Prepare a cloudinit **user-config.yml** in the working directory. For more information [Cloud-Init-Config Sample][Cloud-Init-Config Sample].<br> This could be copied and modified from the cloudinit user dump at the end of this script. |
+|  5  | Run the Script:<br> `$ create-template-via-cloudinit.sh` |
+|  6  | Clone the Finished Template from the Proxmox GUI and Test. |
+
+|  No | Notes |
+| :-- | :---- |
+|  1  |`create-template-via-cloudinit.sh` will install the latest qemu-guest-agent, cloud-init versions and updates. |
+
+### Documentations
+
+* [Admin Guide - PDF][Admin Guide - PDF]
+* [Admin Guide - HTML][Admin Guide - HTML]
+* [Wiki Page][Wiki Page]
+* [Qemu/KVM(qm) Virtual Machines-Guide][Qemu/KVM(qm) Virtual Machines-Guide]
+* [Qemu/KVM(qm) VM Templates-Wiki][Qemu/KVM(qm) VM Templates-Wiki]
+* [Proxmox(qm) Cloud-Init Support-Guide][Proxmox(qm) Cloud-Init Support-Guide]
+* [Proxmox(qm) Cloud-Init Support-Wiki][Proxmox(qm) Cloud-Init Support-Wiki]
+* [Proxmox(qm) Cloud-Init Support FAQ-Wiki][Proxmox(qm) Cloud-Init Support FAQ-Wiki]
+* [Cloud-Init-Config Sample][Cloud-Init-Config Sample]
+
+[PVE-ISO]:                                  https://www.proxmox.com/en/downloads/category/iso-images-pve
+[Etcher]:                                   https://www.balena.io/etcher/
+[PVE-Installation]:                         https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_installation
+[PVE-LVM_Options]:                          https://pve.proxmox.com/pve-docs/pve-admin-guide.html#advanced_lvm_options
+[chriswayg]:                                https://github.com/chriswayg
+[chriswayg-gist]:                           https://gist.github.com/chriswayg/43fbea910e024cbe608d7dcb12cb8466
+[Admin Guide - PDF]:                        https://proxmox.com/en/downloads/item/proxmox-ve-admin-guide-for-6-x
+[Admin Guide - HTML]:                       https://pve.proxmox.com/pve-docs/pve-admin-guide.html
+[Wiki Page]:                                https://pve.proxmox.com/wiki/Main_Page
+[Qemu/KVM(qm) Virtual Machines-Guide]:      https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_virtual_machines
+[Qemu/KVM(qm) VM Templates-Wiki]:           https://pve.proxmox.com/wiki/Qemu/KVM_Virtual_Machines#qm_templates
+[Proxmox(qm) Cloud-Init Support-Guide]:     https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_cloud_init
+[Proxmox(qm) Cloud-Init Support-Wiki]:      https://pve.proxmox.com/wiki/Cloud-Init_Support
+[Proxmox(qm) Cloud-Init Support FAQ-Wiki]:  https://pve.proxmox.com/wiki/Cloud-Init_FAQ
+[Cloud-Init-Config Sample]:                 https://cloudinit.readthedocs.io/en/latest/topics/examples.html#yaml-examples
