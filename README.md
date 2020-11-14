@@ -54,10 +54,6 @@ To create cloud-init template(s) `create-template-via-cloudinit.sh` should be ex
 |  5  | Run the Script:<br> `$ create-template-via-cloudinit.sh` |
 |  6  | Clone the Finished Template from the Proxmox GUI and Test. |
 
-|  No | Notes |
-| :-- | :---- |
-|  1  |`create-template-via-cloudinit.sh` will install the latest qemu-guest-agent, cloud-init versions and updates. |
-
 ### Documentations
 
 * [Admin Guide - PDF][Admin Guide - PDF]
