@@ -48,9 +48,9 @@ done
 ## TODO
 ### - verify authenticity of downloaded images using hash or GPG
 
-printf "\n* Available templates to generate:\n 2) Debian 9\n 3) Debian 10\n 4) Ubuntu 18.04\n 5) Ubuntu 20.04\n 6) RancherOS 1.5.5\n 7) CoreOS/Flatcar\n 8) Centos 7\n 9) Arch\n\n"
-read -p "* Enter number of distro to use: " OSNR
-read -p "* Enter Proxmox VE Node Name: " NNAME
+printf "\nAvailable templates to generate:\n 2) Debian 9\n 3) Debian 10\n 4) Ubuntu 18.04\n 5) Ubuntu 20.04\n 6) RancherOS 1.5.5\n 7) CoreOS/Flatcar\n 8) Centos 7\n 9) Arch\n\n"
+read -p "Enter number of distro to use: " OSNR
+read -p "Enter Proxmox VE Node Name: " NNAME
 
 # defaults which are used for most templates
 RESIZE=+6G
@@ -202,66 +202,66 @@ case $OSNR in
     ;;
 
   *)
-    printf "\n** Unknown OS number. Please use one of the above!\n"
+    printf "\n** Unknown OS number. Please use one of the above! **\n"
     exit 0
     ;;
 esac
 
 [[ $VMIMAGE == *".bz2" ]] \
-    && printf "\n** Uncompressing image (waiting to complete...)\n" \
+    && printf "\n** Uncompressing image (waiting to complete...) **\n" \
     && bzip2 -d --force /tmp/$VMIMAGE \
     && VMIMAGE=$(echo "${VMIMAGE%.*}") # remove .bz2 file extension from file name
 
 # TODO: could prompt for the VM name
-printf "\n** Creating a VM with $MEMORY MB using network bridge $BRIDGE\n"
+printf "\n** Creating a VM with $MEMORY MB using network bridge $BRIDGE **\n"
 qm create $VMID --name $OSNAME-cloud --memory $MEMORY --net0 virtio,bridge=$BRIDGE,firewall=$FIREWALL
 
-printf "\n** Importing the disk in raw format (as 'Unused Disk 0')\n"
+printf "\n** Importing the disk in raw format (as 'Unused Disk 0') **\n"
 qm importdisk $VMID /tmp/$VMIMAGE local-lvm --format raw # --format qcow2
 
-printf "\n** Attaching the disk to the vm using VirtIO SCSI\n"
+printf "\n** Attaching the disk to the vm using VirtIO SCSI **\n"
 qm set $VMID --scsihw virtio-scsi-single --scsi0 local-lvm:vm-$VMID-disk-0,iothread=1
 
-printf "\n** Creating a cloudinit drive managed by Proxmox\n"
+printf "\n** Creating a cloudinit drive managed by Proxmox **\n"
 qm set $VMID --ide2 local:cloudinit
 
-printf "\n** Setting boot and display settings with serial console\n"
+printf "\n** Setting boot and display settings with serial console **\n"
 qm set $VMID --boot c --bootdisk scsi0 --serial0 socket --vga serial0
 
-printf "\n** Using a dhcp server on $BRIDGE (or change to static IP)\n"
+printf "\n** Using a dhcp server on $BRIDGE (or change to static IP) **\n"
 qm set $VMID --ipconfig0 ip=dhcp
 #This would work in a bridged setup, but a routed setup requires a route to be added in the guest
 #qm set $VMID --ipconfig0 ip=10.10.10.222/24,gw=10.10.10.1
 
-printf "\n** Set CPU type\n"
+printf "\n** Set CPU type **\n"
 qm set $VMID --cpu host
 
-printf "\n** Enable agent and autostart with os type\n"
+printf "\n** Enable agent and autostart with os type **\n"
 qm set $VMID --agent enabled=1 --autostart --onboot 1 --ostype l26
 
-printf "\n** Specifying the cloud-init configuration format\n"
+printf "\n** Specifying the cloud-init configuration format **\n"
 qm set $VMID --citype $CITYPE
 
 
 ## TODO: Also ask for a network configuration. Or create a config with routing for a static IP
-printf "\n*** The script can add a cloud-init configuration with users and SSH keys from a file in the current directory.\n"
+printf "\n*** The script can add a cloud-init configuration with users and SSH keys from a file in the current directory. ***\n"
 read -p "Supply the name of the cloud-init-config.yml (this will be skipped, if file not found) [$USERCONFIG_DEFAULT]: " USERCONFIG
 USERCONFIG=${USERCONFIG:-$USERCONFIG_DEFAULT}
 if [[ -f $PWD/$USERCONFIG ]]
 then
     # The cloud-init user config file overrides the user settings done elsewhere
-    printf "\n** Adding user configuration\n"
+    printf "\n** Adding user configuration **\n"
     cp -v $PWD/$USERCONFIG $SNIPPETSPATH/$VMID-$OSNAME-$USERCONFIG
     qm set $VMID --cicustom "user=local:snippets/$VMID-$OSNAME-$USERCONFIG"
     printf "#* cloud-config: $VMID-$OSNAME-$USERCONFIG\n" >> /etc/pve/nodes/$NODENAME/qemu-server/$VMID.conf
 else
     # The SSH key should be supplied either in the cloud-init config file or here
-    printf "\n** Skipping config file, as none was found\n\n** Adding SSH key\n"
+    printf "\n** Skipping config file, as none was found\n\n** Adding SSH key **\n"
     qm set $VMID --sshkey $SSHKEY_CLIENT
     printf "\n"
     read -p "Supply an optional password for the default user (press Enter for none): " PASSWORD
     [[ ! -z "$PASSWORD" ]] \
-        && printf "\n** Adding the password to the config\n" \
+        && printf "\n** Adding the password to the config **\n" \
         && qm set $VMID --cipassword $PASSWORD \
         && printf "#* a password has been set for the default user\n" >> /etc/pve/nodes/$NODENAME/qemu-server/$VMID.conf
     printf "#- cloud-config used: via Proxmox\n" >> /etc/pve/nodes/$NODENAME/qemu-server/$VMID.conf
@@ -270,10 +270,10 @@ fi
 # The NOTE is added to the Summary section of the VM (TODO there seems to be no 'qm' command for this)
 printf "#$NOTE\n" >> /etc/pve/nodes/$NODENAME/qemu-server/$VMID.conf
 
-printf "\n** Increasing the disk size\n"
+printf "\n** Increasing the disk size **\n"
 qm resize $VMID scsi0 $RESIZE
 
-printf "\n** add proxmox.node pub.key to image\n"
+printf "\n** add proxmox.node pub.key to image **\n"
 qm set $VMID --sshkey $SSHKEY_PROXMOX
 
 printf "\n*** The following cloud-init configuration will be used ***\n"
@@ -294,15 +294,40 @@ else
 fi
 
 while true; do
-  read -p "Do you wish to Remove previously downloaded image file?" yn
+  read -p "Are you running Proxmox-VE in Cluster Mode and want to distribute the created template to all nodes (yes or no): " yn
   case $yn in
-    [Yy]* ) 
-      printf "\n** Removing previously downloaded image file **\n\n"; 
-      rm -v /tmp/$VMIMAGE; 
+    [Yy]* )
+      printf "\nPlease enter the names of Nodes other than $NODENAME, separated by 'SPACE' : "
+      read -a CLUSTER_NODE_NAMES
+      printf "\nPlease enter the Template IDs of Nodes other than $VMID, separated by 'SPACE' (only Number) : "
+      read -a CLUSTER_NODE_VMIDS
+      printf "\nPlease enter the Node IPs of Nodes other than $NODENAME, separated by 'SPACE' (192.168.50.50) : "
+      read -a CLUSTER_NODE_IPS
+      printf "\nCheck entered values. Do you want to continue?\n"
+      select yn in "Yes" "No"; do
+        case $yn in
+          Yes ) break;;
+          No ) exit;;
+        esac
+      done
+      for i in ${!CLUSTER_NODE_NAMES[@]}
+      do
+        qm clone $VMID ${CLUSTER_NODE_VMIDS[i]} --name $OSNAME-cloud --full true --storage "local-lvm" --format "raw"
+        printf "\n** ${CLUSTER_NODE_VMIDS[i]} cloned **\n\n"
+        qm migrate ${CLUSTER_NODE_VMIDS[i]} ${CLUSTER_NODE_NAMES[i]} --migration_type insecure
+        printf "\n** ${CLUSTER_NODE_VMIDS[i]} migrated to ${CLUSTER_NODE_NAMES[i]} **\n\n"
+        ssh root@${CLUSTER_NODE_IPS[i]} qm template ${CLUSTER_NODE_VMIDS[i]}
+        printf "\n** ${CLUSTER_NODE_VMIDS[i]} converted to template on ${CLUSTER_NODE_IPS[i]} **\n\n"
+        scp /tmp/$VMIMAGE root@${CLUSTER_NODE_IPS[i]}:/var/lib/vz/template/iso/
+        printf "\n** $VMIMAGE copied to ${CLUSTER_NODE_IPS[i]}:/var/lib/vz/template/iso/ **\n\n"
+      done
       break;;
     [Nn]* ) exit;;
     * ) echo "Please answer yes or no.";;
   esac
 done
+
+printf "\n** Removing previously downloaded image file **\n\n"
+rm -v /tmp/$VMIMAGE
 
 printf "$NOTE\n\n"
