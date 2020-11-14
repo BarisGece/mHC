@@ -32,8 +32,9 @@ It is an Open Source **Server Virtualization Platform**. *Proxmox-VE* includes t
   * `#deb https://enterprise.proxmox.com/debian/pve buster pve-enterprise`
 * Then check `locale` if there is a warning like "Cannot set LC_ALL(or others) to default locale: No such file or directory"
   * Run the following command for each
-    * `export LC_CTYPE=en_US.UTF-8`
-    * `export LC_ALL=en_US.UTF-8`
+    * `echo "export LC_CTYPE=en_US.UTF-8" >> ~/.bashrc`
+    * `echo "export LC_ALL=en_US.UTF-8" >> ~/.bashrc`
+    * `source ~/.bashrc`
     * then run the following command once
       * `locale-gen en_US en_US.UTF-8`
       * `dpkg-reconfigure locales` choose en_US.UTF-8
@@ -46,7 +47,7 @@ It is an Open Source **Server Virtualization Platform**. *Proxmox-VE* includes t
 To create cloud-init template(s) `create-template-via-cloudinit.sh` should be executed on Proxmox-VE Server(s). The script is based on the [create-cloud-template.sh][chriswayg-gist] developed by [chriswayg][chriswayg].
 
 |  No | `create-template-via-cloudinit.sh` Execution Prerequisites |
-| :-- | :--------------------------------------------------------- |
+| :-: | :--------------------------------------------------------- |
 |  1  |`create-template-via-cloudinit.sh` should be executed on a Proxmox VE 6.x Server. |
 |  2  |A DHCP Server should be active on `vmbr0`. |
 |  3  | **Download Latest Version of the Script on Proxmox VE Server:**<br> `curl https://raw.githubusercontent.com/BarisGece/mHC/main/proxmox-ve/create-template-via-cloudinit.sh > /usr/local/bin/create-template-via-cloudinit.sh && chmod -v +x /usr/local/bin/create-template-via-cloudinit.sh` |
@@ -61,6 +62,7 @@ To create cloud-init template(s) `create-template-via-cloudinit.sh` should be ex
 * [Wiki Page][Wiki Page]
 * [Qemu/KVM(qm) Virtual Machines-Guide][Qemu/KVM(qm) Virtual Machines-Guide]
 * [Qemu/KVM(qm) VM Templates-Wiki][Qemu/KVM(qm) VM Templates-Wiki]
+* [Proxomox-VE qm Commands][Proxomox-VE qm Command Line Interface]
 * [Proxmox(qm) Cloud-Init Support-Guide][Proxmox(qm) Cloud-Init Support-Guide]
 * [Proxmox(qm) Cloud-Init Support-Wiki][Proxmox(qm) Cloud-Init Support-Wiki]
 * [Proxmox(qm) Cloud-Init Support FAQ-Wiki][Proxmox(qm) Cloud-Init Support FAQ-Wiki]
@@ -81,3 +83,4 @@ To create cloud-init template(s) `create-template-via-cloudinit.sh` should be ex
 [Proxmox(qm) Cloud-Init Support-Wiki]:      https://pve.proxmox.com/wiki/Cloud-Init_Support
 [Proxmox(qm) Cloud-Init Support FAQ-Wiki]:  https://pve.proxmox.com/wiki/Cloud-Init_FAQ
 [Cloud-Init-Config Sample]:                 https://cloudinit.readthedocs.io/en/latest/topics/examples.html#yaml-examples
+[Proxomox-VE qm Command Line Interface]:    https://pve.proxmox.com/pve-docs/qm.1.html

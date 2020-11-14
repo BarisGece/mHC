@@ -47,6 +47,7 @@ read -p "* Enter Proxmox VE Node Name: " NNAME
 RESIZE=+30G
 MEMORY=2048
 BRIDGE=vmbr0
+FIREWALL=0
 NODENAME=$NNAME
 USERCONFIG_DEFAULT=none # cloud-init-config.yml
 CITYPE=nocloud
@@ -182,13 +183,16 @@ esac
 
 # TODO: could prompt for the VM name
 printf "\n** Creating a VM with $MEMORY MB using network bridge $BRIDGE\n"
-qm create $VMID --name $OSNAME-cloud --memory $MEMORY --net0 virtio,bridge=$BRIDGE
+qm create $VMID --name $OSNAME-cloud --memory $MEMORY --net0 virtio,bridge=$BRIDGE,firewall=$FIREWALL
 
 printf "\n** Importing the disk in qcow2 format (as 'Unused Disk 0')\n"
-qm importdisk $VMID /tmp/$VMIMAGE local -format qcow2
+qm importdisk $VMID /tmp/$VMIMAGE local-lvm --format raw # --format qcow2
 
 printf "\n** Attaching the disk to the vm using VirtIO SCSI\n"
-qm set $VMID --scsihw virtio-scsi-pci --scsi0 /var/lib/vz/images/$VMID/vm-$VMID-disk-0.qcow2
+qm set $VMID --scsihw virtio-scsi-single --scsi0 local-lvm:vm-$VMID-disk-0,iothread=1
+
+printf "\n** Creating a cloudinit drive managed by Proxmox\n"
+qm set $VMID --ide2 local:cloudinit
 
 printf "\n** Setting boot and display settings with serial console\n"
 qm set $VMID --boot c --bootdisk scsi0 --serial0 socket --vga serial0
@@ -197,9 +201,6 @@ printf "\n** Using a dhcp server on $BRIDGE (or change to static IP)\n"
 qm set $VMID --ipconfig0 ip=dhcp
 #This would work in a bridged setup, but a routed setup requires a route to be added in the guest
 #qm set $VMID --ipconfig0 ip=10.10.10.222/24,gw=10.10.10.1
-
-printf "\n** Creating a cloudinit drive managed by Proxmox\n"
-qm set $VMID --ide2 local:cloudinit
 
 printf "\n** Set CPU type\n"
 qm set $VMID --cpu host
@@ -250,7 +251,7 @@ qm cloudinit dump $VMID user
 printf "\n-------------  Network ---------------\n"
 qm cloudinit dump $VMID network
 
-# convert the vm into a template (TODO make this optional)
+printf "\n-------------  Convert the VM into a Template ---------------\n"
 qm template $VMID
 
 printf "\n** Removing previously downloaded image file\n\n"
