@@ -5,10 +5,7 @@ apt-get update
 apt-get -y upgrade
 apt-get -y dist-upgrade
 
-printf "\n*** qemu-guest-agent and cloud-init will be installed  ***\n\n"
-apt-get -y install qemu-guest-agent cloud-init
-
-printf "\n*** qemu-guest-agent and cloud-init installed ***\n\n"
+printf "\n*** Packages updated ***\n\n"
 sleep 5
 
 clear
