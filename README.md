@@ -48,7 +48,7 @@ To create cloud-init template(s) `create-template-via-cloudinit.sh` should be ex
 
 |  No | `create-template-via-cloudinit.sh` Execution Prerequisites |
 | :-: | :--------------------------------------------------------- |
-|  1  |`create-template-via-cloudinit.sh` should be executed on a Proxmox VE 6.x Server. |
+|  1  |`create-template-via-cloudinit.sh` **should be executed on a Proxmox VE 6.x Server.** |
 |  2  |A DHCP Server should be active on `vmbr0`. |
 |  3  | **Download Latest Version of the Script on Proxmox VE Server:**<br> `curl https://raw.githubusercontent.com/BarisGece/mHC/main/proxmox-ve/create-template-via-cloudinit.sh > /usr/local/bin/create-template-via-cloudinit.sh && chmod -v +x /usr/local/bin/create-template-via-cloudinit.sh` |
 |  4  | (optionally) Prepare a cloudinit **user-config.yml** in the working directory. For more information [Cloud-Init-Config Sample][Cloud-Init-Config Sample].<br> This could be copied and modified from the cloudinit user dump at the end of this script. |
