@@ -12,6 +12,14 @@ sleep 5
 clear
 printf "\n*** This script will download a cloud image and create a Proxmox VM template from it. ***\n\n"
 
+printf "\n*** Do you wish to execute script on Proxmox-VE? ***\n\n"
+select yn in "Yes" "No"; do
+  case $yn in
+    Yes ) break;;
+    No ) exit;;
+  esac
+done
+
 ### Prerequisites:
 ### - create-template-via-cloudinit.sh should be executed on a Proxmox VE 6.x Server.
 ### - A DHCP Server should be active on vmbr0
@@ -40,7 +48,7 @@ printf "\n*** This script will download a cloud image and create a Proxmox VM te
 ## TODO
 ### - verify authenticity of downloaded images using hash or GPG
 
-printf "* Available templates to generate:\n 2) Debian 9\n 3) Debian 10\n 4) Ubuntu 18.04\n 5) Ubuntu 20.04\n 6) RancherOS 1.5.5\n 7) CoreOS/Flatcar\n 8) Centos 7\n 9) Arch\n\n"
+printf "\n* Available templates to generate:\n 2) Debian 9\n 3) Debian 10\n 4) Ubuntu 18.04\n 5) Ubuntu 20.04\n 6) RancherOS 1.5.5\n 7) CoreOS/Flatcar\n 8) Centos 7\n 9) Arch\n\n"
 read -p "* Enter number of distro to use: " OSNR
 read -p "* Enter Proxmox VE Node Name: " NNAME
 
@@ -60,15 +68,23 @@ NOTE=""
 printf "\n*** SSH Keys will be generated to connect Proxmox/Client to VM via SSH ***\n\n"
 read -p "Enter a SSH KEY Name for Clients [Click enter to use default ssh client name: $SSHKEY_DEFAULT_CLIENT_NAME]: " SSHKEY_CLIENT_NAME
 SSHKEY_CLIENT_NAME=${SSHKEY_CLIENT_NAME:-$SSHKEY_DEFAULT_CLIENT_NAME}
-ssh-keygen -f ~/.ssh/$SSHKEY_CLIENT_NAME -t ecdsa -b 521 -P client -C "Client@VM"
 SSHKEY_CLIENT=~/.ssh/$SSHKEY_CLIENT_NAME.pub   # DO NOT USE ~/.ssh/id_rsa.pub
-printf "$SSHKEY_CLIENT\n"
+if [[ ! -f $SSHKEY_CLIENT ]] ; then
+  ssh-keygen -f ~/.ssh/$SSHKEY_CLIENT_NAME -t ecdsa -b 521 -P client -C "Client@VM"
+  printf "$SSHKEY_CLIENT generated\n\n"
+else
+  printf "$SSHKEY_CLIENT IS EXISTS\n\n"
+fi
 
 read -p "Enter a SSH KEY Name for Proxmox [Click enter to use default ssh proxmox name: $SSHKEY_DEFAULT_PROXMOX_NAME]: " SSHKEY_PROXMOX_NAME
 SSHKEY_PROXMOX_NAME=${SSHKEY_PROXMOX_NAME:-$SSHKEY_DEFAULT_PROXMOX_NAME}
-ssh-keygen -f ~/.ssh/$SSHKEY_PROXMOX_NAME -t rsa -b 4096 -P proxmox -C "Proxmox@VM"
 SSHKEY_PROXMOX=~/.ssh/$SSHKEY_PROXMOX_NAME.pub # DO NOT USE ~/.ssh/id_rsa.pub
-printf "$SSHKEY_PROXMOX_NAME\n"
+if [[ ! -f $SSHKEY_PROXMOX ]]; then
+  ssh-keygen -f ~/.ssh/$SSHKEY_PROXMOX_NAME -t rsa -b 4096 -P proxmox -C "Proxmox@VM"
+  printf "$SSHKEY_PROXMOX generated\n\n"
+else
+  printf "$SSHKEY_PROXMOX IS EXISTS\n\n"
+fi
 
 case $OSNR in
 
@@ -231,7 +247,7 @@ qm set $VMID --citype $CITYPE
 printf "\n*** The script can add a cloud-init configuration with users and SSH keys from a file in the current directory.\n"
 read -p "Supply the name of the cloud-init-config.yml (this will be skipped, if file not found) [$USERCONFIG_DEFAULT]: " USERCONFIG
 USERCONFIG=${USERCONFIG:-$USERCONFIG_DEFAULT}
-if [ -f $PWD/$USERCONFIG ]
+if [[ -f $PWD/$USERCONFIG ]]
 then
     # The cloud-init user config file overrides the user settings done elsewhere
     printf "\n** Adding user configuration\n"
@@ -244,7 +260,7 @@ else
     qm set $VMID --sshkey $SSHKEY_CLIENT
     printf "\n"
     read -p "Supply an optional password for the default user (press Enter for none): " PASSWORD
-    [ ! -z "$PASSWORD" ] \
+    [[ ! -z "$PASSWORD" ]] \
         && printf "\n** Adding the password to the config\n" \
         && qm set $VMID --cipassword $PASSWORD \
         && printf "#* a password has been set for the default user\n" >> /etc/pve/nodes/$NODENAME/qemu-server/$VMID.conf
@@ -269,7 +285,24 @@ qm cloudinit dump $VMID network
 printf "\n-------------  Convert the VM into a Template ---------------\n"
 qm template $VMID
 
-printf "\n** Removing previously downloaded image file\n\n"
-rm -v /tmp/$VMIMAGE
+printf "\n------------- Copy downloaded Image file into Templates Folder ---------------\n"
+if [[ ! -f /var/lib/vz/template/iso/$VMIMAGE ]] ; then
+  cp /tmp/$VMIMAGE /var/lib/vz/template/iso/$VMIMAGE
+  printf "$VMIMAGE Copied\n\n"
+else
+  printf "$VMIMAGE is Exists\n\n"
+fi
+
+while true; do
+  read -p "Do you wish to Remove previously downloaded image file?" yn
+  case $yn in
+    [Yy]* ) 
+      printf "\n** Removing previously downloaded image file **\n\n"; 
+      rm -v /tmp/$VMIMAGE; 
+      break;;
+    [Nn]* ) exit;;
+    * ) echo "Please answer yes or no.";;
+  esac
+done
 
 printf "$NOTE\n\n"
