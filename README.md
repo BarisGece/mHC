@@ -54,6 +54,7 @@ To create cloud-init template(s) `create-template-via-cloudinit.sh` should be ex
 |  4  | (optionally) Prepare a cloudinit **user-config.yml** in the working directory. For more information [Cloud-Init-Config Sample][Cloud-Init-Config Sample].<br> This could be copied and modified from the cloudinit user dump at the end of this script. |
 |  5  | Run the Script:<br> `$ create-template-via-cloudinit.sh` |
 |  6  | Clone the Finished Template from the Proxmox GUI and Test. |
+|  7  | To the migration to be completed successfully, the Proxmox Storage Configuration should be set as follows.<br> **local**(*Type - Directory*):<ul><li>***Content:*** **VZDump backup file, Disk image, ISO image, Container template**</li><li>***Path/Target:*** **/var/lib/vz**</li><li>***Shared:*** **Yes**</li></ul> **local-lvm**(*Type - LVM-Thin*):<ul><li>***Content:*** **Disk image, Container**</li><li>***Nodes:*** **Select ALL Nodes by one by**</li></ul> *All of them should be **ENABLED***<br> ![DC_Storage_Settings](./img/DC_Storage_Settings.png)  |
 
 ### Documentations
 
