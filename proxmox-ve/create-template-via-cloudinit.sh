@@ -1,11 +1,12 @@
 #!/bin/bash
 set -o errexit
 
+printf "\n*** Packages will be updated ***\n\n"
 apt-get update 
 apt-get -y upgrade
 apt-get -y dist-upgrade
 
-printf "\n*** Packages updated ***\n\n"
+printf "\n*** Packages Updated. Proxmox VM Template creation will start after 5 seconds ***\n\n"
 sleep 5
 
 clear
@@ -44,7 +45,7 @@ read -p "* Enter number of distro to use: " OSNR
 read -p "* Enter Proxmox VE Node Name: " NNAME
 
 # defaults which are used for most templates
-RESIZE=+30G
+RESIZE=+6G
 MEMORY=2048
 BRIDGE=vmbr0
 FIREWALL=0
@@ -52,8 +53,22 @@ NODENAME=$NNAME
 USERCONFIG_DEFAULT=none # cloud-init-config.yml
 CITYPE=nocloud
 SNIPPETSPATH=/var/lib/vz/snippets
-SSHKEY=~/.ssh/id_rsa.pub
+SSHKEY_DEFAULT_CLIENT_NAME=client-id_ecdsa
+SSHKEY_DEFAULT_PROXMOX_NAME=proxmox-id_rsa
 NOTE=""
+
+printf "\n*** SSH Keys will be generated to connect Proxmox/Client to VM via SSH ***\n\n"
+read -p "Enter a SSH KEY Name for Clients [Click enter to use default ssh client name: $SSHKEY_DEFAULT_CLIENT_NAME]: " SSHKEY_CLIENT_NAME
+SSHKEY_CLIENT_NAME=${SSHKEY_CLIENT_NAME:-$SSHKEY_DEFAULT_CLIENT_NAME}
+ssh-keygen -f ~/.ssh/$SSHKEY_CLIENT_NAME -t ecdsa -b 521 -P client -C "Client@VM"
+SSHKEY_CLIENT=~/.ssh/$SSHKEY_CLIENT_NAME.pub   # DO NOT USE ~/.ssh/id_rsa.pub
+printf "$SSHKEY_CLIENT\n"
+
+read -p "Enter a SSH KEY Name for Proxmox [Click enter to use default ssh proxmox name: $SSHKEY_DEFAULT_PROXMOX_NAME]: " SSHKEY_PROXMOX_NAME
+SSHKEY_PROXMOX_NAME=${SSHKEY_PROXMOX_NAME:-$SSHKEY_DEFAULT_PROXMOX_NAME}
+ssh-keygen -f ~/.ssh/$SSHKEY_PROXMOX_NAME -t rsa -b 4096 -P proxmox -C "Proxmox@VM"
+SSHKEY_PROXMOX=~/.ssh/$SSHKEY_PROXMOX_NAME.pub # DO NOT USE ~/.ssh/id_rsa.pub
+printf "$SSHKEY_PROXMOX_NAME\n"
 
 case $OSNR in
 
@@ -185,7 +200,7 @@ esac
 printf "\n** Creating a VM with $MEMORY MB using network bridge $BRIDGE\n"
 qm create $VMID --name $OSNAME-cloud --memory $MEMORY --net0 virtio,bridge=$BRIDGE,firewall=$FIREWALL
 
-printf "\n** Importing the disk in qcow2 format (as 'Unused Disk 0')\n"
+printf "\n** Importing the disk in raw format (as 'Unused Disk 0')\n"
 qm importdisk $VMID /tmp/$VMIMAGE local-lvm --format raw # --format qcow2
 
 printf "\n** Attaching the disk to the vm using VirtIO SCSI\n"
@@ -226,7 +241,7 @@ then
 else
     # The SSH key should be supplied either in the cloud-init config file or here
     printf "\n** Skipping config file, as none was found\n\n** Adding SSH key\n"
-    qm set $VMID --sshkey $SSHKEY
+    qm set $VMID --sshkey $SSHKEY_CLIENT
     printf "\n"
     read -p "Supply an optional password for the default user (press Enter for none): " PASSWORD
     [ ! -z "$PASSWORD" ] \
@@ -243,7 +258,7 @@ printf "\n** Increasing the disk size\n"
 qm resize $VMID scsi0 $RESIZE
 
 printf "\n** add proxmox.node pub.key to image\n"
-qm set $VMID --sshkey ~/.ssh/id_rsa.pub
+qm set $VMID --sshkey $SSHKEY_PROXMOX
 
 printf "\n*** The following cloud-init configuration will be used ***\n"
 printf "\n-------------  User ------------------\n"
