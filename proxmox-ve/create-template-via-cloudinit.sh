@@ -61,7 +61,7 @@ NODENAME=$NNAME
 USERCONFIG_DEFAULT=none # cloud-init-config.yml
 CITYPE=nocloud
 SNIPPETSPATH=/var/lib/vz/snippets
-SSHKEY_DEFAULT_CLIENT_NAME=client-id_ecdsa
+SSHKEY_DEFAULT_CLIENT_NAME=client-id_rsa
 SSHKEY_DEFAULT_PROXMOX_NAME=proxmox-id_rsa
 NOTE=""
 
@@ -70,7 +70,7 @@ read -p "Enter a SSH KEY Name for Clients [Click enter to use default ssh client
 SSHKEY_CLIENT_NAME=${SSHKEY_CLIENT_NAME:-$SSHKEY_DEFAULT_CLIENT_NAME}
 SSHKEY_CLIENT=~/.ssh/$SSHKEY_CLIENT_NAME.pub   # DO NOT USE ~/.ssh/id_rsa.pub
 if [[ ! -f $SSHKEY_CLIENT ]] ; then
-  ssh-keygen -f ~/.ssh/$SSHKEY_CLIENT_NAME -t ecdsa -b 521 -P client -C "Client@VM"
+  ssh-keygen -f ~/.ssh/$SSHKEY_CLIENT_NAME -t rsa -b 4096 -P client -C "Client@VM"
   printf "$SSHKEY_CLIENT generated\n\n"
 else
   printf "$SSHKEY_CLIENT IS EXISTS\n\n"
@@ -223,7 +223,7 @@ printf "\n** Attaching the disk to the vm using VirtIO SCSI **\n"
 qm set $VMID --scsihw virtio-scsi-single --scsi0 local-lvm:vm-$VMID-disk-0,iothread=1
 
 printf "\n** Creating a cloudinit drive managed by Proxmox **\n"
-qm set $VMID --ide2 local:cloudinit
+qm set $VMID --ide2 local-lvm:cloudinit
 
 printf "\n** Setting boot and display settings with serial console **\n"
 qm set $VMID --boot c --bootdisk scsi0 --serial0 socket --vga serial0
@@ -316,8 +316,12 @@ while true; do
         printf "\n** ${CLUSTER_NODE_VMIDS[i]} cloned **\n\n"
         qm migrate ${CLUSTER_NODE_VMIDS[i]} ${CLUSTER_NODE_NAMES[i]} --migration_type insecure
         printf "\n** ${CLUSTER_NODE_VMIDS[i]} migrated to ${CLUSTER_NODE_NAMES[i]} **\n\n"
+        ssh root@${CLUSTER_NODE_IPS[i]} qm start ${CLUSTER_NODE_VMIDS[i]}
+        printf "\n** ${CLUSTER_NODE_VMIDS[i]} should start on ${CLUSTER_NODE_NAMES[i]} to create local-lvm:cloudinit disk **\n\n"
+        sleep 20
+        ssh root@${CLUSTER_NODE_IPS[i]} qm stop ${CLUSTER_NODE_VMIDS[i]} --skiplock true && qm wait ${CLUSTER_NODE_VMIDS[i]}
         ssh root@${CLUSTER_NODE_IPS[i]} qm template ${CLUSTER_NODE_VMIDS[i]}
-        printf "\n** ${CLUSTER_NODE_VMIDS[i]} converted to template on ${CLUSTER_NODE_IPS[i]} **\n\n"
+        printf "\n** ${CLUSTER_NODE_VMIDS[i]} stopped and converted to template on ${CLUSTER_NODE_IPS[i]} **\n\n"
         scp /tmp/$VMIMAGE root@${CLUSTER_NODE_IPS[i]}:/var/lib/vz/template/iso/
         printf "\n** $VMIMAGE copied to ${CLUSTER_NODE_IPS[i]}:/var/lib/vz/template/iso/ **\n\n"
       done
