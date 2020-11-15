@@ -2,7 +2,7 @@
 set -o errexit
 
 printf "\n*** Packages will be updated ***\n\n"
-apt-get update 
+apt-get update
 apt-get -y upgrade
 apt-get -y dist-upgrade
 
@@ -53,7 +53,7 @@ read -p "Enter number of distro to use: " OSNR
 read -p "Enter Proxmox VE Node Name: " NNAME
 
 # defaults which are used for most templates
-RESIZE=+6G
+RESIZE=+30G
 MEMORY=2048
 BRIDGE=vmbr0
 FIREWALL=0
@@ -62,7 +62,6 @@ USERCONFIG_DEFAULT=none # cloud-init-config.yml
 CITYPE=nocloud
 SNIPPETSPATH=/var/lib/vz/snippets
 SSHKEY_DEFAULT_CLIENT_NAME=client-id_rsa
-SSHKEY_DEFAULT_PROXMOX_NAME=proxmox-id_rsa
 NOTE=""
 
 printf "\n*** SSH Keys will be generated to connect Proxmox/Client to VM via SSH ***\n\n"
@@ -74,16 +73,6 @@ if [[ ! -f $SSHKEY_CLIENT ]] ; then
   printf "$SSHKEY_CLIENT generated\n\n"
 else
   printf "$SSHKEY_CLIENT IS EXISTS\n\n"
-fi
-
-read -p "Enter a SSH KEY Name for Proxmox [Click enter to use default ssh proxmox name: $SSHKEY_DEFAULT_PROXMOX_NAME]: " SSHKEY_PROXMOX_NAME
-SSHKEY_PROXMOX_NAME=${SSHKEY_PROXMOX_NAME:-$SSHKEY_DEFAULT_PROXMOX_NAME}
-SSHKEY_PROXMOX=~/.ssh/$SSHKEY_PROXMOX_NAME.pub # DO NOT USE ~/.ssh/id_rsa.pub
-if [[ ! -f $SSHKEY_PROXMOX ]]; then
-  ssh-keygen -f ~/.ssh/$SSHKEY_PROXMOX_NAME -t rsa -b 4096 -P proxmox -C "Proxmox@VM"
-  printf "$SSHKEY_PROXMOX generated\n\n"
-else
-  printf "$SSHKEY_PROXMOX IS EXISTS\n\n"
 fi
 
 case $OSNR in
@@ -259,7 +248,7 @@ else
     printf "\n** Skipping config file, as none was found\n\n** Adding SSH key **\n"
     qm set $VMID --sshkey $SSHKEY_CLIENT
     printf "\n"
-    read -p "Supply an optional password for the default user (press Enter for none): " PASSWORD
+    read -s -p "Supply an optional password for the default user (press Enter for none): " PASSWORD
     [[ ! -z "$PASSWORD" ]] \
         && printf "\n** Adding the password to the config **\n" \
         && qm set $VMID --cipassword $PASSWORD \
@@ -273,9 +262,6 @@ printf "#$NOTE\n" >> /etc/pve/nodes/$NODENAME/qemu-server/$VMID.conf
 printf "\n** Increasing the disk size **\n"
 qm resize $VMID scsi0 $RESIZE
 
-printf "\n** add proxmox.node pub.key to image **\n"
-qm set $VMID --sshkey $SSHKEY_PROXMOX
-
 printf "\n*** The following cloud-init configuration will be used ***\n"
 printf "\n-------------  User ------------------\n"
 qm cloudinit dump $VMID user
@@ -288,45 +274,25 @@ qm template $VMID
 printf "\n------------- Copy downloaded Image file into Templates Folder ---------------\n"
 if [[ ! -f /var/lib/vz/template/iso/$VMIMAGE ]] ; then
   cp /tmp/$VMIMAGE /var/lib/vz/template/iso/$VMIMAGE
-  printf "$VMIMAGE Copied\n\n"
+  printf "$VMIMAGE Copied into /var/lib/vz/template/iso/ \n\n"
 else
   printf "$VMIMAGE is Exists\n\n"
 fi
 
 while true; do
-  read -p "Are you running Proxmox-VE in Cluster Mode and want to distribute the created template to all nodes (yes or no): " yn
+  read -p "Are you running Proxmox-VE in Cluster Mode and want to distribute the downloaded Image file to all nodes (yes or no): " yn
   case $yn in
     [Yy]* )
-      printf "\nPlease enter the names of Nodes other than $NODENAME, separated by 'SPACE' : "
-      read -a CLUSTER_NODE_NAMES
-      printf "\nPlease enter the Template IDs of Nodes other than $VMID, separated by 'SPACE' (only Number) : "
-      read -a CLUSTER_NODE_VMIDS
-      printf "\nPlease enter the Node IPs of Nodes other than $NODENAME, separated by 'SPACE' (192.168.50.50) : "
+      printf "\nPlease enter the IPs of the Nodes wanted to distribute the downloaded Image file, separated by 'SPACE' (192.168.50.50) : "
       read -a CLUSTER_NODE_IPS
-      printf "\nCheck entered values. Do you want to continue?\n"
-      select yn in "Yes" "No"; do
-        case $yn in
-          Yes ) break;;
-          No ) exit;;
-        esac
-      done
-      for i in ${!CLUSTER_NODE_NAMES[@]}
+      for i in ${!CLUSTER_NODE_IPS[@]}
       do
-        qm clone $VMID ${CLUSTER_NODE_VMIDS[i]} --name $OSNAME-cloud --full true --storage "local-lvm" --format "raw"
-        printf "\n** ${CLUSTER_NODE_VMIDS[i]} cloned **\n\n"
-        qm migrate ${CLUSTER_NODE_VMIDS[i]} ${CLUSTER_NODE_NAMES[i]} --migration_type insecure
-        printf "\n** ${CLUSTER_NODE_VMIDS[i]} migrated to ${CLUSTER_NODE_NAMES[i]} **\n\n"
-        ssh root@${CLUSTER_NODE_IPS[i]} qm start ${CLUSTER_NODE_VMIDS[i]}
-        printf "\n** ${CLUSTER_NODE_VMIDS[i]} should start on ${CLUSTER_NODE_NAMES[i]} to create local-lvm:cloudinit disk **\n\n"
-        sleep 20
-        ssh root@${CLUSTER_NODE_IPS[i]} "qm stop ${CLUSTER_NODE_VMIDS[i]} --skiplock true && qm wait ${CLUSTER_NODE_VMIDS[i]}"
-        ssh root@${CLUSTER_NODE_IPS[i]} qm template ${CLUSTER_NODE_VMIDS[i]}
-        printf "\n** ${CLUSTER_NODE_VMIDS[i]} stopped and converted to template on ${CLUSTER_NODE_IPS[i]} **\n\n"
-        scp /tmp/$VMIMAGE root@${CLUSTER_NODE_IPS[i]}:/var/lib/vz/template/iso/
-        printf "\n** $VMIMAGE copied to ${CLUSTER_NODE_IPS[i]}:/var/lib/vz/template/iso/ **\n\n"
+        scp /tmp/$VMIMAGE root@${CLUSTER_NODE_IPS[i]}:/tmp
+        ssh root@${CLUSTER_NODE_IPS[i]} "cp /tmp/$VMIMAGE /var/lib/vz/template/iso/"
+        printf "\n** $VMIMAGE copied to ${CLUSTER_NODE_IPS[i]}:/var/lib/vz/template/iso/ & /tmp Folders**\n\n"
       done
       break;;
-    [Nn]* ) exit;;
+    [Nn]* ) break;;
     * ) echo "Please answer yes or no.";;
   esac
 done
