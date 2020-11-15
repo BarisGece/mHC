@@ -280,13 +280,16 @@ else
 fi
 
 while true; do
-  read -p "Are you running Proxmox-VE in Cluster Mode and want to distribute the downloaded Image file to all nodes (yes or no): " yn
+  read -p "Are you running Proxmox-VE in Cluster Mode and want to distribute the downloaded Image & SSHKEY files to all nodes (yes or no): " yn
   case $yn in
     [Yy]* )
       printf "\nPlease enter the IPs of the Nodes wanted to distribute the downloaded Image file, separated by 'SPACE' (192.168.50.50) : "
       read -a CLUSTER_NODE_IPS
       for i in ${!CLUSTER_NODE_IPS[@]}
       do
+        scp ~/.ssh/$SSHKEY_CLIENT_NAME.pub root@${CLUSTER_NODE_IPS[i]}:~/.ssh/
+        scp ~/.ssh/$SSHKEY_CLIENT_NAME root@${CLUSTER_NODE_IPS[i]}:~/.ssh/
+        printf "\n** $SSHKEY_CLIENT_NAME copied to ${CLUSTER_NODE_IPS[i]}:~/.ssh/ **\n\n"
         scp /tmp/$VMIMAGE root@${CLUSTER_NODE_IPS[i]}:/tmp
         ssh root@${CLUSTER_NODE_IPS[i]} "cp /tmp/$VMIMAGE /var/lib/vz/template/iso/"
         printf "\n** $VMIMAGE copied to ${CLUSTER_NODE_IPS[i]}:/var/lib/vz/template/iso/ & /tmp Folders**\n\n"
