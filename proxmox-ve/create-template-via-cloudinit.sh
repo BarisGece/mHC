@@ -20,17 +20,6 @@ select yn in "Yes" "No"; do
   esac
 done
 
-### Prerequisites:
-### - create-template-via-cloudinit.sh should be executed on a Proxmox VE 6.x Server.
-### - A DHCP Server should be active on vmbr0
-### - Download Latest Version of the Script:
-###   curl https://raw.githubusercontent.com/BarisGece/mHC/main/proxmox-ve/create-template-via-cloudinit.sh > /usr/local/bin/create-template-via-cloudinit.sh && chmod -v +x /usr/local/bin/create-template-via-cloudinit.sh
-### - (optionally) Prepare a cloudinit user-config.yml in the working directory. For more information https://cloudinit.readthedocs.io/en/latest/topics/examples.html#yaml-examples.
-###   This could be copied and modified from the cloudinit user dump at the end of this script.
-### - Run the Script:
-###   $ create-template-via-cloudinit.sh
-### - Clone the Finished Template from the Proxmox GUI and Test
-###
 ### NOTES:
 ### - Links to Cloud Images:
 ###   Directory             : https://docs.openstack.org/image-guide/obtain-images.html
@@ -60,7 +49,7 @@ FIREWALL=0
 NODENAME=$NNAME
 USERCONFIG_DEFAULT=none # cloud-init-config.yml
 CITYPE=nocloud
-SNIPPETSPATH=/var/lib/vz/snippets
+SNIPPETSPATH=/snippets/snippets
 SSHKEY_DEFAULT_CLIENT_NAME=client-id_rsa
 NOTE=""
 
@@ -241,7 +230,7 @@ then
     # The cloud-init user config file overrides the user settings done elsewhere
     printf "\n** Adding user configuration **\n"
     cp -v $PWD/$USERCONFIG $SNIPPETSPATH/$VMID-$OSNAME-$USERCONFIG
-    qm set $VMID --cicustom "user=local:snippets/$VMID-$OSNAME-$USERCONFIG"
+    qm set $VMID --cicustom "user=snippets:snippets/$VMID-$OSNAME-$USERCONFIG"
     printf "#* cloud-config: $VMID-$OSNAME-$USERCONFIG\n" >> /etc/pve/nodes/$NODENAME/qemu-server/$VMID.conf
 else
     # The SSH key should be supplied either in the cloud-init config file or here
