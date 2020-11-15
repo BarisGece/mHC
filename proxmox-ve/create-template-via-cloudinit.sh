@@ -319,7 +319,7 @@ while true; do
         ssh root@${CLUSTER_NODE_IPS[i]} qm start ${CLUSTER_NODE_VMIDS[i]}
         printf "\n** ${CLUSTER_NODE_VMIDS[i]} should start on ${CLUSTER_NODE_NAMES[i]} to create local-lvm:cloudinit disk **\n\n"
         sleep 20
-        ssh root@${CLUSTER_NODE_IPS[i]} qm stop ${CLUSTER_NODE_VMIDS[i]} --skiplock true && qm wait ${CLUSTER_NODE_VMIDS[i]}
+        ssh root@${CLUSTER_NODE_IPS[i]} "qm stop ${CLUSTER_NODE_VMIDS[i]} --skiplock true && qm wait ${CLUSTER_NODE_VMIDS[i]}"
         ssh root@${CLUSTER_NODE_IPS[i]} qm template ${CLUSTER_NODE_VMIDS[i]}
         printf "\n** ${CLUSTER_NODE_VMIDS[i]} stopped and converted to template on ${CLUSTER_NODE_IPS[i]} **\n\n"
         scp /tmp/$VMIMAGE root@${CLUSTER_NODE_IPS[i]}:/var/lib/vz/template/iso/
