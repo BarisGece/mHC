@@ -203,7 +203,7 @@ esac
 
 # TODO: could prompt for the VM name
 printf "\n** Creating a VM with $MEMORY MB using network bridge $BRIDGE **\n"
-qm create $VMID --name $OSNAME-cloud --memory $MEMORY --net0 virtio,bridge=$BRIDGE,firewall=$FIREWALL
+qm create $VMID --name $OSNAME-cloud --memory $MEMORY --net0 virtio,bridge=$BRIDGE,firewall=$FIREWALL --agent enabled=1,fstrim_cloned_disks=1,type=virtio
 
 printf "\n** Importing the disk in raw format (as 'Unused Disk 0') **\n"
 qm importdisk $VMID /tmp/$VMIMAGE local-lvm --format raw # --format qcow2
