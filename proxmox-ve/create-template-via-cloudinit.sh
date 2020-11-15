@@ -231,7 +231,7 @@ then
     printf "\n** Adding user configuration **\n"
     cp -v $PWD/$USERCONFIG $SNIPPETSPATH/$VMID-$OSNAME-$USERCONFIG
     qm set $VMID --cicustom "user=snippets:snippets/$VMID-$OSNAME-$USERCONFIG"
-    printf "#* cloud-config: $VMID-$OSNAME-$USERCONFIG\n" >> /etc/pve/nodes/$NODENAME/qemu-server/$VMID.conf
+    printf "# cloud-config: $VMID-$OSNAME-$USERCONFIG\n" >> /etc/pve/nodes/$NODENAME/qemu-server/$VMID.conf
 else
     # The SSH key should be supplied either in the cloud-init config file or here
     printf "\n** Skipping config file, as none was found\n\n** Adding SSH key **\n"
@@ -242,7 +242,7 @@ else
         && printf "\n** Adding the password to the config **\n" \
         && qm set $VMID --cipassword $PASSWORD \
         && printf "#* a password has been set for the default user\n" >> /etc/pve/nodes/$NODENAME/qemu-server/$VMID.conf
-    printf "#- cloud-config used: via Proxmox\n" >> /etc/pve/nodes/$NODENAME/qemu-server/$VMID.conf
+    printf "# cloud-config used: via Proxmox\n" >> /etc/pve/nodes/$NODENAME/qemu-server/$VMID.conf
 fi
 
 # The NOTE is added to the Summary section of the VM (TODO there seems to be no 'qm' command for this)

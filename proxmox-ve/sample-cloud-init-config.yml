@@ -1,25 +1,34 @@
 #cloud-config
-autoinstall:
-  version: 1
-  ssh:
-    install-server: true
-    allow-pw: true
-  packages:
-    - qemu-guest-agent
-  storage:
-    layout:
-      name: direct
-    swap:
-      size: 0
-  user-data:
-    package_upgrade: true
-    timezone: Europe/Paris
-    users:
-      - name: ubuntu
-        passwd: $5$Jv3sPfRm$QSMF/slqf2X6tppCkbuUWcNygikS4/FRVGTlea75ZJ2
-        groups: [adm, cdrom, dip, plugdev, lxd, sudo]
-        lock-passwd: false
-        sudo: ALL=(ALL) NOPASSWD:ALL
-        shell: /bin/bash
-        ssh_authorized_keys:
+package_upgrade: true
+packages:
+  - tmux
+  - nmap
+  - curl
+  - wget
+  - git
+  - htop
+  - iperf3
+  - fail2ban
+  - qemu-guest-agent
+users:
+  - name: ubuntu
+    groups: sudo
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    ssh_authorized_keys:
           - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDJxGF1RZCyWkK5jsRGjMsCOkrkRcbzh5QYNDrj7uQty/2/iNF9RSvOmOjww164/FOYl72atXdOrnzcyYZcknNGClMcoSQKmaSSsLXswDeB7cUKqjMmDuoP5m6GPiNDL6mi0tBtXCwEoyl19wmHC6/w9DGmrNy+bwX36O5xG6o+OEjBVCxz+Bh4jUpgS1rfxAWXEZ+iJ0F5Fu8iOjl8QV2o6moNjsz7mmBoBaj/mdmjDGJG9nr/afQBvFcirhBLRVcLHNVE8yH2ybB2oh9nzMC7geOQ8DXbAetVZiAlQlybxOHGxNTCao2M34oYEx2hNrUUsU3Sh4EJQ0wJwItG90iFXZeEe4LFjzwhysb3jDlyZmO5aQBkgu1mafYGzOwlT2Dnhi3hadhkN3ruEcXlshI2VcpKSue3IARyLTD6vE48KUQR0s1MSrH+7Iox3Ahl6IcGW7XibhbHQwa0NcZTcQQ/1croGhIew0c4lhledhib6qiID+F3YLggSiRwfqcD9F9nI6eNQdZ5X7x6B5lpHz49IyEgvSh8SQwCoA8MRv8XhLR7uE35JIEKVtgNKTsQwM67BMD0GQkwrkraKodTZ5kq0ENR3AhI3WDv874q+ncFhwOl60V5C/n9eGKMgTCgFw/VEYC9ZxLmDXXLJF5tLF5lq9OQ7SaGLsFd4VeMrB4qSw== Client@VM
+runcmd:
+  sudo systemctl start qemu-guest-agent.service
+  #- sed -i -e '/^PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
+  #- sed -i 's|[#]*PasswordAuthentication yes|PasswordAuthentication no|g' /etc/ssh/sshd_config
+  #- sed -i 's|UsePAM yes|UsePAM no|g' /etc/ssh/sshd_config
+  #- restart ssh
+  #- curl -L https://omnitruck.chef.io/install.sh | bash
+final_message: "The system is finally up, after $UPTIME seconds"
+# CentOS on Digital Ocean not working for some reason but Ubuntu 14.04 does
+# cloud-init logs: /var/log/cloud-init.log and /var/log/cloud-init-output.log
+# References:
+# - https://cloudinit.readthedocs.io/en/latest/
+# - https://help.ubuntu.com/community/CloudInit
+# - https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux_OpenStack_Platform/4/html/End_User_Guide/user-data.html
+# - https://bazaar.launchpad.net/~cloud-init-dev/cloud-init/trunk/files/head:/doc/examples/
