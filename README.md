@@ -68,6 +68,7 @@ To create cloud-init template(s) `create-template-via-cloudinit.sh` should be ex
 * [Proxmox(qm) Cloud-Init Support-Wiki][Proxmox(qm) Cloud-Init Support-Wiki]
 * [Proxmox(qm) Cloud-Init Support FAQ-Wiki][Proxmox(qm) Cloud-Init Support FAQ-Wiki]
 * [Cloud-Init-Config Sample][Cloud-Init-Config Sample]
+* [Ubuntu Autoinstall Quick Start][Ubuntu Autoinstall Quick Start]
 
 [PVE-ISO]:                                  https://www.proxmox.com/en/downloads/category/iso-images-pve
 [Etcher]:                                   https://www.balena.io/etcher/
@@ -80,8 +81,9 @@ To create cloud-init template(s) `create-template-via-cloudinit.sh` should be ex
 [Wiki Page]:                                https://pve.proxmox.com/wiki/Main_Page
 [Qemu/KVM(qm) Virtual Machines-Guide]:      https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_virtual_machines
 [Qemu/KVM(qm) VM Templates-Wiki]:           https://pve.proxmox.com/wiki/Qemu/KVM_Virtual_Machines#qm_templates
+[Proxomox-VE qm Command Line Interface]:    https://pve.proxmox.com/pve-docs/qm.1.html
 [Proxmox(qm) Cloud-Init Support-Guide]:     https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_cloud_init
 [Proxmox(qm) Cloud-Init Support-Wiki]:      https://pve.proxmox.com/wiki/Cloud-Init_Support
 [Proxmox(qm) Cloud-Init Support FAQ-Wiki]:  https://pve.proxmox.com/wiki/Cloud-Init_FAQ
 [Cloud-Init-Config Sample]:                 https://cloudinit.readthedocs.io/en/latest/topics/examples.html#yaml-examples
-[Proxomox-VE qm Command Line Interface]:    https://pve.proxmox.com/pve-docs/qm.1.html
+[Ubuntu Autoinstall Quick Start]:           https://ubuntu.com/server/docs/install/autoinstall-quickstart
