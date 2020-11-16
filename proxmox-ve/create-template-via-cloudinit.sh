@@ -58,7 +58,8 @@ read -p "Enter a SSH KEY Name for Clients [Click enter to use default ssh client
 SSHKEY_CLIENT_NAME=${SSHKEY_CLIENT_NAME:-$SSHKEY_DEFAULT_CLIENT_NAME}
 SSHKEY_CLIENT=~/.ssh/$SSHKEY_CLIENT_NAME.pub   # DO NOT USE ~/.ssh/id_rsa.pub
 if [[ ! -f $SSHKEY_CLIENT ]] ; then
-  ssh-keygen -f ~/.ssh/$SSHKEY_CLIENT_NAME -t rsa -b 4096 -P client -C "Client@VM"
+  ssh-keygen -f ~/.ssh/$SSHKEY_CLIENT_NAME -t rsa -b 4096 -C "Client@VM"
+  #ssh-keygen -f ~/.ssh/$SSHKEY_CLIENT_NAME -t rsa -b 4096 -P client -C "Client@VM"
   printf "$SSHKEY_CLIENT generated\n\n"
 else
   printf "$SSHKEY_CLIENT IS EXISTS\n\n"
