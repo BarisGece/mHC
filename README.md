@@ -123,7 +123,7 @@ Now, **Proxmox-VE templates** will be created with **Packer([proxmox-clone][prox
 
 #### Locals
 
-An `input-variable` cannot be used in **another input variable**, so [**locals**][Packer Locals Block] could be used instead. The `locals` **block**, also called the `local-variable` **block**, defines locals within your Packer configuration. [Local Values][Local Values] assign a name to an expression, that can then be used multiple times within a folder.
+An `input-variable` cannot be used in **another input variable**, so [**locals**][The locals block] could be used instead. The `locals` **block**, also called the `local-variable` **block**, defines locals within your Packer configuration. [Local Values][Local Values] assign a name to an expression, that can then be used multiple times within a folder.
 
 ```sh
 # locals.pkr.hcl
@@ -142,13 +142,15 @@ locals {
 
 ### Packer Documents
 
-* [Creating Proxmox Templates with Packer - Aaron Berry][Aaron Berry Packer Article]
-  * [Article Github Repo][Aaron Berry Article Repo]
+* [Packer Proxmox Builder][Packer Proxmox Builder]
+* [proxmox-clone][proxmox-clone] **&** [proxmox-iso][proxmox-iso]
 * [**Input Variables** and `local` variables][Input Variables and local variables]
   * [The `variable` block][The variable block]
   * [**Input Variables**][Input Variables]
-  * [The `locals` block][Packer Locals Block]
+  * [The `locals` block][The locals block]
   * [Local Values][Local Values]
+* [Creating Proxmox Templates with Packer - Aaron Berry][Aaron Berry Packer Article]
+  * [Article Github Repo][Aaron Berry Article Repo]
 
 [Proxmox-VE]:                               https://www.proxmox.com/
 [PVE-ISO]:                                  https://www.proxmox.com/en/downloads/category/iso-images-pve
@@ -178,7 +180,7 @@ locals {
 [Input Variables and local variables]:      https://www.packer.io/guides/hcl/variables
 [The variable block]:                       https://www.packer.io/docs/from-1.5/blocks/variable
 [Input Variables]:                          https://www.packer.io/docs/from-1.5/variables
-[Packer Locals Block]:                      https://www.packer.io/docs/from-1.5/blocks/locals
+[The locals block]:                         https://www.packer.io/docs/from-1.5/blocks/locals
 [Local Values]:                             https://www.packer.io/docs/from-1.5/locals
 [QEMU Agent Error-Github ]:                 https://github.com/hashicorp/packer/issues/9539#issuecomment-728378170
 [Aaron Berry Packer Article]:               https://dev.to/aaronktberry/creating-proxmox-templates-with-packer-1b35
