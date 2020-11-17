@@ -1,10 +1,10 @@
 # mHC
 
-The easy-way to create and manage a Mini Home Cloud. mHC is built using **Shell**, [**Proxmox-VE**](#Proxmox-VE), **[Packer](#Packer)**, **Terraform**, **Ansible** and is not completely reliable for PROD environments.
+The easy-way to create and manage a Mini Home Cloud. mHC is built using **Shell**, [**Proxmox-VE**](#Proxmox-VE), **[Packer](#Packer)**, **Terraform**, **Ansible** and is not completely reliable for ***Production*** environments.
 
 ## Proxmox-VE
 
-It is an Open Source **Server Virtualization Platform**. [**Proxmox-VE**][Proxmox-VE] includes two different virtualization technologies which are **Kernel-Based Virtual Machine *(KVM)*** and **Container-Dased Virtualization *(LXC)***. *Proxmox-VE* can run on a **single node**, or **assemble a cluster of many nodes**. This way, your virtual machines and containers can run on proxmox with high availability.
+It is an Open Source **Server Virtualization Platform**. [**Proxmox-VE**][Proxmox-VE] includes two different virtualization technologies which are **Kernel-Based Virtual Machine *(KVM)*** and **Container-Based Virtualization *(LXC)***. *Proxmox-VE* can run on a **single node**, or **assemble a cluster of many nodes**. This way, your virtual machines and containers can run on proxmox with high availability.
 
 ![Proxmox-VE Architecture](./img/Proxmox-VE_Architecture.svg)
 
@@ -20,7 +20,7 @@ It is an Open Source **Server Virtualization Platform**. [**Proxmox-VE**][Proxmo
   | After setting the disk options the next page asks for basic configuration options like the **location**, the **time zone**, and **keyboard** layout. *They only need to be changed in the rare case that **auto detection** fails or a **different keyboard layout** should be used.* | ![Proxmox-VE Select Location](./img/pve-menu-3-select-location.png) |
   | Next the *password* of the **superuser *(root)*** and an ***email*** address needs to be specified. The password must be at least **5** characters. However, it is highly recommended that you use a stronger password, so set a password that is at least **12 to 14** characters. The email address is used to send notifications to the system administrator. | ![Proxmox-VE Set Password](./img/pve-menu-4-set-password.png) |
   | The last step is the network configuration. Please note that during installation you can either use an IPv4 or IPv6 address, but not both. To configure a dual stack node, add additional IP addresses after the installation. *There will be created a proxmox cluster consisting of 3 physical servers. Therefore, 3 different network information is given below.*<ul><li>***Management Interface:*** **xx:xx:xx:xx:30:39** - **xx:xx:xx:xx:30:31** - **xx:xx:xx:xx:2f:04**</li><li>***Hostname(FQDN):*** **one.rancher.pve** - **two.rancher.pve** - **three.rancher.pve**</li><li>***IP Adress:*** **192.168.50.10** - **192.168.50.20** - **192.168.50.30**</li><li>***Netmask:*** **255.255.255.0**</li><li>***Gateway:*** **192.168.50.1**</li><li>***DNS Server:*** **192.168.50.1**</li></ul> | ![Proxmox-VE Setup Network](./img/pve-menu-5-setup-network.png) |
-  | The next step shows a summary of the previously selected options. Re-check every setting and use the **Previous** button if a setting needs to be changed. To accept, press **Install**. The installation starts to format disks and copies packages to the target. Please wait until this step has finished; then **remove** the installation medium and **restart** your system.<br> Then point your browser to the IP address given during installation ***`https://youripaddress:8006`*** to reach **Proxmox Web Interface**.<br> Default login is **"root"** and the **root password** is defined during the installation process. | ![Proxmox-VE Installation Summary](./img/pve-menu-6-install-summary.png) |
+  | The next step shows a summary of the previously selected options. Re-check every setting and use the **Previous** button if a setting needs to be changed. To accept, press **Install**. The installation starts to format disks and copies packages to the target. Please wait until this step has finished; then **remove** the installation medium and **restart** your system.<br> Then point your browser to the IP address given during installation ***`https://youripaddress:8006`*** to reach **Proxmox Web Interface**.<br> Default login is **"root"** and the **root password** is defined(step 4) during the installation process. | ![Proxmox-VE Installation Summary](./img/pve-menu-6-install-summary.png) |
 * After the installation is completed, the files which repositories are defined should be as follows in order to use APT Package Management tool successfully.
   * File /etc/apt/sources.list
     * `deb http://ftp.debian.org/debian buster main contrib`
@@ -30,28 +30,28 @@ It is an Open Source **Server Virtualization Platform**. [**Proxmox-VE**][Proxmo
       * **Note:** PVE ***pve-no-subscription*** repository provided by *proxmox.com*, but NOT recommended for production use
 * File /etc/apt/sources.list.d/pve-enterprise.list
   * `#deb https://enterprise.proxmox.com/debian/pve buster pve-enterprise`
-* Then check `locale` if there is a warning like "Cannot set LC_ALL(or others) to default locale: No such file or directory"
-  * Run the following command for each
+* Then check `locale` if there is an error like "Cannot set LC_ALL(or others) to default locale: No such file or directory"
+  * Run the following commands for each error
     * `echo "export LC_CTYPE=en_US.UTF-8" >> ~/.bashrc`
     * `echo "export LC_ALL=en_US.UTF-8" >> ~/.bashrc`
     * `source ~/.bashrc`
-    * then run the following command once
+    * then run the following commands once
       * `locale-gen en_US en_US.UTF-8`
       * `dpkg-reconfigure locales` choose en_US.UTF-8
-* Get latest Updates
+* Get latest updates
   * `apt update && apt upgrade -y && apt dist-upgrade`
 * **RESTART/REBOOT** System
 
 ### Installation - Script Step - Creating cloud-init Template
 
-To create cloud-init template(s) `create-template-via-cloudinit.sh` should be executed on Proxmox-VE Server(s). The script is based on the [create-cloud-template.sh][chriswayg-gist] developed by [chriswayg][chriswayg].
+After installation to create cloud-init template(s) `create-template-via-cloudinit.sh` should be executed on Proxmox-VE Server(s). The script is based on the [create-cloud-template.sh][chriswayg-gist] developed by [chriswayg][chriswayg].
 
 |  No | `create-template-via-cloudinit.sh` Execution Prerequisites |
 | :-: | :--------------------------------------------------------- |
 |  1  |`create-template-via-cloudinit.sh` **should be executed on a Proxmox VE 6.x Server.** |
 |  2  |A DHCP Server should be active on `vmbr0`. |
 |  3  | **Download Latest Version of the Script on Proxmox VE Server:**<br> `curl https://raw.githubusercontent.com/BarisGece/mHC/main/proxmox-ve/create-template-via-cloudinit.sh > /usr/local/bin/create-template-via-cloudinit.sh && chmod -v +x /usr/local/bin/create-template-via-cloudinit.sh` |
-|  4  | **++--Caution!--++ MUST to DO USE cloud-init-config.yml**<br> The cloud-init files need to be stored in a **snippet**. There is not detail information very well documented in [Proxmox-VE qm cloud_init][Proxomox-VE qm cloud_init] but [Alex Williams][AW Gist] informed well for us. <ol><li>Go to `Storage View -> Storage -> Add -> Directory`</li><li>Give it an ID such as `snippets`, and specify any path on your host such as `/snippets`</li><li>Under `Content` choose `Snippets` and de-select `Disk image` (optional)</li><li>Upload (scp/rsync/whatever) your `user-data, meta-data, network-config` files to your _proxmox_ server in `/snippets/snippets/` (the directory should be there if you followed steps 1-3)</li></ol> Finally, you just need to `qm set` with `--cicustom`, like this:<br> `qm set 100 --cicustom "user=snippets:snippets/user-data,network=snippets:snippets/network-config,meta=snippets:snippets/meta-data"` |
+|  4  | **-- Caution! MUST BE DONE to USE cloud-init-config.yml --**<br> The cloud-init files need to be stored in a **snippet**. There is not detail information very well documented in [Proxmox-VE qm cloud_init][Proxomox-VE qm cloud_init] but [Alex Williams][AW Gist] kept us well informed. <ol><li>Go to `Storage View -> Storage -> Add -> Directory`</li><li>Give it an ID such as `snippets`, and specify any path on your host such as `/snippets`</li><li>Under `Content` choose `Snippets` and de-select `Disk image` (optional)</li><li>Upload (scp/rsync/whatever) your `user-data, meta-data, network-config` files to your _proxmox_ server in `/snippets/snippets/` (the directory should be there if you followed steps 1-3)</li></ol> Finally, you just need to `qm set` with `--cicustom`, like this:(If `cloud-init-config.yml` is present, the following command will run automatically in `create-template-via-cloudinit.sh`)<br> `qm set 100 --cicustom "user=snippets:snippets/user-data,network=snippets:snippets/network-config,meta=snippets:snippets/meta-data"` |
 |  4  | (optionally) Prepare a cloudinit **user-cloud-init-config.yml** in the working directory. For more information [Cloud-Init-Config Sample][Cloud-Init-Config Sample].<br> [sample-cloud-init-config.yml][sample-cloud-init-config.yml] can be used as a sample. |
 |  6  | To the migration to be completed successfully, the Proxmox Storage Configuration should be set as follows.<br> **local**(*Type - Directory*):<ul><li>***Content:*** **VZDump backup file, Disk image, ISO image, Container template**</li><li>***Path/Target:*** **/var/lib/vz**</li><li>***Shared:*** **Yes**</li></ul> **local-lvm**(*Type - LVM-Thin*):<ul><li>***Content:*** **Disk image, Container**</li><li>***Nodes:*** **Select ALL Nodes by one by**</li></ul> *All of them should be **ENABLED***<br> ![DC_Storage_Settings](./img/DC_Storage_Settings.png)  |
 |  7  | Run the Script:<br> `$ create-template-via-cloudinit.sh` |
@@ -70,11 +70,10 @@ To create cloud-init template(s) `create-template-via-cloudinit.sh` should be ex
 * [Proxmox(qm) Cloud-Init Support FAQ-Wiki][Proxmox(qm) Cloud-Init Support FAQ-Wiki]
 * [Cloud-Init-Config Sample][Cloud-Init-Config Sample]
 * [Cloud-Init-Config Documentation][Cloud-Init-Config Documentation]
-* [Ubuntu Autoinstall Quick Start][Ubuntu Autoinstall Quick Start]
 
 ## Packer
 
-Packer is a tool for **automatic machine images** generation and **Proxmox-VE templates** will be created with the ***Packer*** to make it more standardized and automated.
+Packer is an **automatic machine image generation** tool and ***Proxmox-VE templates*** will be created with ***Packer*** to make it more standardized and automated.
 
 ### Installing Packer on Ubuntu Jump Server
 
@@ -87,12 +86,13 @@ Packer is a tool for **automatic machine images** generation and **Proxmox-VE te
 
 ### Preparing Proxmox-VE template via Packer
 
-[**Proxmox Packer Builder**][Proxmox Packer Builder] will be used to create the *Proxmox-VE template*. It provision and configure the VM and then converts it into a template. *Packer Proxmox Builder* perfoms operations via the [**Proxmox Web API**][Proxmox Web API].
+[**Packer Proxmox Builder**][Packer Proxmox Builder] will be used to create the *Proxmox-VE template*. It provision and configure the VM and then converts it into a template. *Packer Proxmox Builder* perfoms operations via the [**Proxmox Web API**][Proxmox Web API].
 
-Packer is able to target both **ISO** and *existing* **Cloud-Init Images**:
+Packer Proxmox Builder is able to create new images using both **ISO([proxmox-iso][proxmox-iso])** and existing **Cloud-Init Images([proxmox-clone][proxmox-clone])**. Creating a new image using **Packer([proxmox-iso][proxmox-iso])** will be developed later.
 
-* [proxmox-clone][proxmox-clone]: The proxmox image Packer builder is able to create new images for use with Proxmox VE.
-* [proxmox-iso][proxmox-iso]: The proxmox Packer builder is able to create new images for use with Proxmox VE.
+Now, **Proxmox-VE templates** will be created with **Packer([proxmox-clone][proxmox-clone])** using **existing Cloud-Init Images** created via `create-template-via-cloudinit.sh`.
+
+---
 
 #### In Packer, ***Assigning Values* to the build Variables** with *HCL2* can be done in **3** different ways as follows  
 
@@ -115,7 +115,7 @@ Packer is able to target both **ISO** and *existing* **Cloud-Init Images**:
   |  2  |**Multiple** `-var-file` flags can be provided.<br>`packer build -var-file="secret.pkrvars.hcl" -var-file="production.pkrvars.hcl" .`|
   |  3  |If a **default value** is set in `variables.pkr.hcl`, the *variable is optional*. Otherwise, the *variable must be set*. To force set variables don't set **default value** as `variable "vm_id" {...}` in  `variables.pkr.hcl` |
   |  4  |The `variable` block, also called the `input-variable` block, defines variables within your *Packer* configuration.|
-  |  5  | **DEBUG MODE** => `PACKER_LOG=1 packer build -debug -on-error=ask .`<br> **RELEASE MODE** => `PACKER_LOG=1 packer build .` |
+  |  5  | **Debug** => `PACKER_LOG=1 packer build -debug -on-error=ask .`<br> **Release** => `PACKER_LOG=1 packer build .` |
 * For more information about Packer Variables :
   * [**Input Variables** and `local` variables][Input Variables and local variables]
   * [The `variable` block][The variable block]
@@ -171,11 +171,10 @@ locals {
 [Proxmox(qm) Cloud-Init Support-Guide]:     https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_cloud_init
 [Proxmox(qm) Cloud-Init Support-Wiki]:      https://pve.proxmox.com/wiki/Cloud-Init_Support
 [Proxmox(qm) Cloud-Init Support FAQ-Wiki]:  https://pve.proxmox.com/wiki/Cloud-Init_FAQ
-[Ubuntu Autoinstall Quick Start]:           https://ubuntu.com/server/docs/install/autoinstall-quickstart
+[Packer Proxmox Builder]:                   https://www.packer.io/docs/builders/proxmox.html
+[Proxmox Web API]:                          https://pve.proxmox.com/wiki/Proxmox_VE_API
 [proxmox-clone]:                            https://www.packer.io/docs/builders/proxmox/clone
 [proxmox-iso]:                              https://www.packer.io/docs/builders/proxmox/iso
-[Proxmox Packer Builder]:                   https://www.packer.io/docs/builders/proxmox.html
-[Proxmox Web API]:                          https://pve.proxmox.com/wiki/Proxmox_VE_API
 [Input Variables and local variables]:      https://www.packer.io/guides/hcl/variables
 [The variable block]:                       https://www.packer.io/docs/from-1.5/blocks/variable
 [Input Variables]:                          https://www.packer.io/docs/from-1.5/variables
@@ -189,6 +188,7 @@ locals {
 
 [Aaron Berry Article Repo]: https://github.com/Aaron-K-T-Berry/packer-ubuntu-proxmox-template
 [packer-proxmox-templates]: https://github.com/chriswayg/packer-proxmox-templates
+[Ubuntu Autoinstall Quick Start]:           https://ubuntu.com/server/docs/install/autoinstall-quickstart
 
 [ubuntu iso]: https://releases.ubuntu.com/20.04/
 [B]: https://github.com/aerialls/madalynn-packer/blob/master/ubuntu-20.04/ubuntu.json

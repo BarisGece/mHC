@@ -47,22 +47,22 @@ MEMORY=2048
 BRIDGE=vmbr0
 FIREWALL=0
 NODENAME=$NNAME
-USERCONFIG_DEFAULT=none # cloud-init-config.yml
+USERCONFIG_DEFAULT=sample-cloud-init-config.yml
 CITYPE=nocloud
 SNIPPETSPATH=/snippets/snippets
-SSHKEY_DEFAULT_CLIENT_NAME=client-id_rsa
+SSHKEY_DEFAULT_CLIENT_NAME=client-id_rsa # DO NOT USE ~/.ssh/id_rsa.pub
 NOTE=""
 
 printf "\n*** SSH Keys will be generated to connect Proxmox/Client to VM via SSH ***\n\n"
 read -p "Enter a SSH KEY Name for Clients [Click enter to use default ssh client name: $SSHKEY_DEFAULT_CLIENT_NAME]: " SSHKEY_CLIENT_NAME
 SSHKEY_CLIENT_NAME=${SSHKEY_CLIENT_NAME:-$SSHKEY_DEFAULT_CLIENT_NAME}
-SSHKEY_CLIENT=~/.ssh/$SSHKEY_CLIENT_NAME.pub   # DO NOT USE ~/.ssh/id_rsa.pub
+SSHKEY_CLIENT=~/.ssh/$SSHKEY_CLIENT_NAME.pub
 if [[ ! -f $SSHKEY_CLIENT ]] ; then
   ssh-keygen -f ~/.ssh/$SSHKEY_CLIENT_NAME -t rsa -b 4096 -C "Client@VM"
   #ssh-keygen -f ~/.ssh/$SSHKEY_CLIENT_NAME -t rsa -b 4096 -P client -C "Client@VM"
-  printf "$SSHKEY_CLIENT generated\n\n"
+  printf "\n** $SSHKEY_CLIENT generated **\n\n"
 else
-  printf "$SSHKEY_CLIENT IS EXISTS\n\n"
+  printf "\n** $SSHKEY_CLIENT IS EXISTS **\n\n"
 fi
 
 case $OSNR in
@@ -242,7 +242,7 @@ else
     [[ ! -z "$PASSWORD" ]] \
         && printf "\n** Adding the password to the config **\n" \
         && qm set $VMID --cipassword $PASSWORD \
-        && printf "#* a password has been set for the default user\n" >> /etc/pve/nodes/$NODENAME/qemu-server/$VMID.conf
+        && printf "# A password has been set for the default user\n" >> /etc/pve/nodes/$NODENAME/qemu-server/$VMID.conf
     printf "# cloud-config used: via Proxmox\n" >> /etc/pve/nodes/$NODENAME/qemu-server/$VMID.conf
 fi
 
@@ -253,10 +253,15 @@ printf "\n** Increasing the disk size **\n"
 qm resize $VMID scsi0 $RESIZE
 
 printf "\n*** The following cloud-init configuration will be used ***\n"
-printf "\n-------------  User ------------------\n"
-qm cloudinit dump $VMID user
-printf "\n-------------  Network ---------------\n"
-qm cloudinit dump $VMID network
+if [[ -f $PWD/$USERCONFIG ]]
+then
+  cat $PWD/$USERCONFIG
+else
+  printf "\n-------------  User ------------------\n"
+  qm cloudinit dump $VMID user
+  printf "\n-------------  Network ---------------\n"
+  qm cloudinit dump $VMID network
+fi
 
 printf "\n-------------  Convert the VM into a Template ---------------\n"
 qm template $VMID
