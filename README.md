@@ -1,10 +1,10 @@
 # mHC
 
-The easy-way to create and manage a Mini Home Cloud. mHC is built using [Proxmox-VE](#Proxmox-VE), Terraform, Packer and is not completely reliable for PROD environments.
+The easy-way to create and manage a Mini Home Cloud. mHC is built using **Shell**, [**Proxmox-VE**](#Proxmox-VE), **[Packer](#Packer)**, **Terraform**, **Ansible** and is not completely reliable for PROD environments.
 
 ## Proxmox-VE
 
-It is an Open Source **Server Virtualization Platform**. *Proxmox-VE* includes two different virtualization technologies which are **Kernel-Based Virtual Machine *(KVM)*** and **Container-Dased Virtualization *(LXC)***. *Proxmox-VE* can run on a **single node**, or **assemble a cluster of many nodes**. This way, your virtual machines and containers can run on proxmox with high availability.
+It is an Open Source **Server Virtualization Platform**. [**Proxmox-VE**][Proxmox-VE] includes two different virtualization technologies which are **Kernel-Based Virtual Machine *(KVM)*** and **Container-Dased Virtualization *(LXC)***. *Proxmox-VE* can run on a **single node**, or **assemble a cluster of many nodes**. This way, your virtual machines and containers can run on proxmox with high availability.
 
 ![Proxmox-VE Architecture](./img/Proxmox-VE_Architecture.svg)
 
@@ -57,7 +57,7 @@ To create cloud-init template(s) `create-template-via-cloudinit.sh` should be ex
 |  7  | Run the Script:<br> `$ create-template-via-cloudinit.sh` |
 |  8  | Clone the Finished Template from the Proxmox GUI and Test. |
 
-### Documentations
+### Proxmox-VE Documents
 
 * [Admin Guide - PDF][Admin Guide - PDF]
 * [Admin Guide - HTML][Admin Guide - HTML]
@@ -69,8 +69,71 @@ To create cloud-init template(s) `create-template-via-cloudinit.sh` should be ex
 * [Proxmox(qm) Cloud-Init Support-Wiki][Proxmox(qm) Cloud-Init Support-Wiki]
 * [Proxmox(qm) Cloud-Init Support FAQ-Wiki][Proxmox(qm) Cloud-Init Support FAQ-Wiki]
 * [Cloud-Init-Config Sample][Cloud-Init-Config Sample]
+* [Cloud-Init-Config Documentation][Cloud-Init-Config Documentation]
 * [Ubuntu Autoinstall Quick Start][Ubuntu Autoinstall Quick Start]
 
+## Packer
+
+Packer is a tool for **automatic machine images** generation and **Proxmox-VE templates** will be created with the ***Packer*** to make it more standardized and automated.
+
+### Installing Packer on Ubuntu Jump Server
+
+* Add the HashiCorp GPG key.
+  * `curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -`
+* Add the official HashiCorp Linux repository.
+  * `sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"`
+* Update and install.
+  * `sudo apt-get update && sudo apt-get install packer`
+
+### Preparing Proxmox-VE template via Packer
+
+[**Proxmox Packer Builder**][Proxmox Packer Builder] will be used to create the *Proxmox-VE template*. It provision and configure the VM and then converts it into a template. *Packer Proxmox Builder* perfoms operations via the [**Proxmox Web API**][Proxmox Web API].
+
+In Packer, ***Assigning Values* to the build Variables** with *HCL2* can be done in **3** different ways as follows.
+
+* **Command-line flags**
+  * Variables can be defined directly on the *command line* with the `-var` flag. We will not use.
+    * `packer build -var 'weekday=Sunday' -var 'flavor=chocolate'`
+* **Variables file**
+  * To persist variable values, create a `*.pkrvars.hcl` file and assign variables within this file. Also, packer will **automatically load any var file** that matches the name `*.auto.pkrvars.hcl`, without the need to pass the file via the command line.
+    * `*.pkrvars.hcl` => `packer build -var-file="*.pkrvars.hcl" .`
+    * `*.auto.pkrvars.hcl` => `packer build .`
+* **Environment Variables**
+  * Packer will read ***environment variables*** in the form of `PKR_VAR_name` to find the value for a variable.
+    * `export PKR_VAR_access_key=Key1 && packer build .`
+* **Variable Defaults**
+  * If no value is assigned to a variable via any of these methods and the variable has a `default` key in its declaration, that value will be used for the variable.
+    * `packer build .`
+* |  No | Notes about Packer Variables |
+  | :-: | :--------------------------- |
+  |  1  |Don't save **sensitive data** to version control via *varibles files*. You can create a **local secret variables file** or use **environment variables**|
+  |  2  |**Multiple** `-var-file` flags can be provided.<br>`packer build -var-file="secret.pkrvars.hcl" -var-file="production.pkrvars.hcl" .`|
+  |  3  |If a **default value** is set in `variables.pkr.hcl`, the *variable is optional*. Otherwise, the *variable must be set*. To force set variables don't set **default value** as `variable "vm_id" {...}` in  `variables.pkr.hcl` |
+  |  4  |The `variable` block, also called the `input-variable` block, defines variables within your *Packer* configuration.|
+  |  5  | **DEBUG MODE** => `PACKER_LOG=1 packer build -debug -on-error=ask .`<br> **RELEASE MODE** => `PACKER_LOG=1 packer build .` |
+* For more information about Packer Variables :
+  * [**Input Variables** and `local` variables][Input Variables and local variables]
+  * [The `variable` block][The variable block]
+  * [**Input Variables**][Input Variables]
+
+Locals
+An `input-variable` cannot be used in **another input variable**, so [**locals**][Packer Locals Block] could be used instead.
+
+|  No | Packer Execution Prerequisites |
+| :-: | :----------------------------- |
+|  1  |To skip validating the certificate set `insecure_skip_tls_verify = true` in **sources.pkr.hcl** |
+|  2  |To Packer run sucessfully `qemu-guest-agent` must be installed on VMs & `qemu_agent = ...` configuration option should be `true` in `sources.pkr.hcl`<br> For more detail [Error getting SSH address 500 QEMU guest agent is not running][QEMU Agent Error-Github]|
+
+### Packer Documents
+
+* [Creating Proxmox Templates with Packer - Aaron Berry][Aaron Berry Packer Article]
+  * [Article Github Repo][Aaron Berry Article Repo]
+* [**Input Variables** and `local` variables][Input Variables and local variables]
+* [The `variable` block][The variable block]
+* [**Input Variables**][Input Variables]
+* [The `locals` block][Packer Locals Block]
+
+[Proxmox-VE]:                               https://www.proxmox.com/
 [PVE-ISO]:                                  https://www.proxmox.com/en/downloads/category/iso-images-pve
 [Etcher]:                                   https://www.balena.io/etcher/
 [PVE-Installation]:                         https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_installation
@@ -80,6 +143,7 @@ To create cloud-init template(s) `create-template-via-cloudinit.sh` should be ex
 [Proxomox-VE qm cloud_init]:                https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_cloud_init
 [AW Gist]:                                  https://gist.github.com/aw/ce460c2100163c38734a83e09ac0439a
 [Cloud-Init-Config Sample]:                 https://cloudinit.readthedocs.io/en/latest/topics/examples.html#yaml-examples
+[Cloud-Init-Config Documentation]:          https://cloudinit.readthedocs.io/en/latest/
 [sample-cloud-init-config.yml]:             https://raw.githubusercontent.com/BarisGece/mHC/main/proxmox-ve/sample-cloud-init-config.yml
 [Admin Guide - PDF]:                        https://proxmox.com/en/downloads/item/proxmox-ve-admin-guide-for-6-x
 [Admin Guide - HTML]:                       https://pve.proxmox.com/pve-docs/pve-admin-guide.html
@@ -91,3 +155,30 @@ To create cloud-init template(s) `create-template-via-cloudinit.sh` should be ex
 [Proxmox(qm) Cloud-Init Support-Wiki]:      https://pve.proxmox.com/wiki/Cloud-Init_Support
 [Proxmox(qm) Cloud-Init Support FAQ-Wiki]:  https://pve.proxmox.com/wiki/Cloud-Init_FAQ
 [Ubuntu Autoinstall Quick Start]:           https://ubuntu.com/server/docs/install/autoinstall-quickstart
+[Proxmox Packer Builder]:                   https://www.packer.io/docs/builders/proxmox.html
+[Proxmox Web API]:                          https://pve.proxmox.com/wiki/Proxmox_VE_API
+[Input Variables and local variables]:      https://www.packer.io/guides/hcl/variables
+[The variable block]:                       https://www.packer.io/docs/from-1.5/blocks/variable
+[Input Variables]:                          https://www.packer.io/docs/from-1.5/variables
+[Packer Locals Block]:                      https://www.packer.io/docs/from-1.5/blocks/locals
+[QEMU Agent Error-Github ]:                 https://github.com/hashicorp/packer/issues/9539#issuecomment-728378170
+[Aaron Berry Packer Article]:               https://dev.to/aaronktberry/creating-proxmox-templates-with-packer-1b35
+[Aaron Berry Article Repo]:                 https://github.com/Aaron-K-T-Berry/packer-ubuntu-proxmox-template
+
+[**Ansible**-proxmox]: https://github.com/chriswayg/ansible-proxmox
+
+[Aaron Berry Article Repo]: https://github.com/Aaron-K-T-Berry/packer-ubuntu-proxmox-template
+[packer-proxmox-templates]: https://github.com/chriswayg/packer-proxmox-templates
+
+[ubuntu iso]: https://releases.ubuntu.com/20.04/
+[B]: https://github.com/aerialls/madalynn-packer/blob/master/ubuntu-20.04/ubuntu.json
+[install1]: https://help.ubuntu.com/
+[install2]: https://ubuntu.com/server/docs
+[Using preseeding1]: https://help.ubuntu.com/lts/installation-guide/
+[Using **preseeding2**]: https://help.ubuntu.com/lts/installation-guide/amd64/index.html
+[packer-boxes]: https://github.com/geerlingguy/packer-boxes/blob/master/ubuntu2004/box-config.json
+[Automating Ubuntu 20.04 installs with Packer]: https://nickcharlton.net/posts/automating-ubuntu-2004-installs-with-packer.html
+[Automating Ubuntu Server 20.04 with Packer]: https://beryju.org/blog/automating-ubuntu-server-20-04-with-packer
+[VM Templates for ubuntu]: https://github.com/boxcutter/ubuntu
+
+[Automated image builds with Jenkins, Packer, and Kubernetes]: https://cloud.google.com/solutions/automated-build-images-with-jenkins-kubernetes

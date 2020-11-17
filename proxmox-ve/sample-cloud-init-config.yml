@@ -25,10 +25,4 @@ runcmd:
   - sed -i 's|UsePAM yes|UsePAM no|g' /etc/ssh/sshd_config
   - restart ssh
 final_message: "The system is finally up, after $UPTIME seconds"
-# CentOS on Digital Ocean not working for some reason but Ubuntu 14.04 does
 # cloud-init logs: /var/log/cloud-init.log and /var/log/cloud-init-output.log
-# References:
-# - https://cloudinit.readthedocs.io/en/latest/
-# - https://help.ubuntu.com/community/CloudInit
-# - https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux_OpenStack_Platform/4/html/End_User_Guide/user-data.html
-# - https://bazaar.launchpad.net/~cloud-init-dev/cloud-init/trunk/files/head:/doc/examples/
