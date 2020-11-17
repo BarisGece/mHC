@@ -89,7 +89,12 @@ Packer is a tool for **automatic machine images** generation and **Proxmox-VE te
 
 [**Proxmox Packer Builder**][Proxmox Packer Builder] will be used to create the *Proxmox-VE template*. It provision and configure the VM and then converts it into a template. *Packer Proxmox Builder* perfoms operations via the [**Proxmox Web API**][Proxmox Web API].
 
-In Packer, ***Assigning Values* to the build Variables** with *HCL2* can be done in **3** different ways as follows.
+Packer is able to target both **ISO** and *existing* **Cloud-Init Images**:
+
+* [proxmox-clone][proxmox-clone]: The proxmox image Packer builder is able to create new images for use with Proxmox VE.
+* [proxmox-iso][proxmox-iso]: The proxmox Packer builder is able to create new images for use with Proxmox VE.
+
+#### In Packer, ***Assigning Values* to the build Variables** with *HCL2* can be done in **3** different ways as follows  
 
 * **Command-line flags**
   * Variables can be defined directly on the *command line* with the `-var` flag. We will not use.
@@ -116,8 +121,19 @@ In Packer, ***Assigning Values* to the build Variables** with *HCL2* can be done
   * [The `variable` block][The variable block]
   * [**Input Variables**][Input Variables]
 
-Locals
-An `input-variable` cannot be used in **another input variable**, so [**locals**][Packer Locals Block] could be used instead.
+#### Locals
+
+An `input-variable` cannot be used in **another input variable**, so [**locals**][Packer Locals Block] could be used instead. The `locals` **block**, also called the `local-variable` **block**, defines locals within your Packer configuration. [Local Values][Local Values] assign a name to an expression, that can then be used multiple times within a folder.
+
+```sh
+# locals.pkr.hcl
+locals {
+    # locals can be bare values like:
+    wee = local.baz
+    # locals can also be set with other variables :
+    baz = "Foo is '${var.foo}' but not '${local.wee}'"
+}
+```
 
 |  No | Packer Execution Prerequisites |
 | :-: | :----------------------------- |
@@ -129,9 +145,10 @@ An `input-variable` cannot be used in **another input variable**, so [**locals**
 * [Creating Proxmox Templates with Packer - Aaron Berry][Aaron Berry Packer Article]
   * [Article Github Repo][Aaron Berry Article Repo]
 * [**Input Variables** and `local` variables][Input Variables and local variables]
-* [The `variable` block][The variable block]
-* [**Input Variables**][Input Variables]
-* [The `locals` block][Packer Locals Block]
+  * [The `variable` block][The variable block]
+  * [**Input Variables**][Input Variables]
+  * [The `locals` block][Packer Locals Block]
+  * [Local Values][Local Values]
 
 [Proxmox-VE]:                               https://www.proxmox.com/
 [PVE-ISO]:                                  https://www.proxmox.com/en/downloads/category/iso-images-pve
@@ -155,12 +172,15 @@ An `input-variable` cannot be used in **another input variable**, so [**locals**
 [Proxmox(qm) Cloud-Init Support-Wiki]:      https://pve.proxmox.com/wiki/Cloud-Init_Support
 [Proxmox(qm) Cloud-Init Support FAQ-Wiki]:  https://pve.proxmox.com/wiki/Cloud-Init_FAQ
 [Ubuntu Autoinstall Quick Start]:           https://ubuntu.com/server/docs/install/autoinstall-quickstart
+[proxmox-clone]:                            https://www.packer.io/docs/builders/proxmox/clone
+[proxmox-iso]:                              https://www.packer.io/docs/builders/proxmox/iso
 [Proxmox Packer Builder]:                   https://www.packer.io/docs/builders/proxmox.html
 [Proxmox Web API]:                          https://pve.proxmox.com/wiki/Proxmox_VE_API
 [Input Variables and local variables]:      https://www.packer.io/guides/hcl/variables
 [The variable block]:                       https://www.packer.io/docs/from-1.5/blocks/variable
 [Input Variables]:                          https://www.packer.io/docs/from-1.5/variables
 [Packer Locals Block]:                      https://www.packer.io/docs/from-1.5/blocks/locals
+[Local Values]:                             https://www.packer.io/docs/from-1.5/locals
 [QEMU Agent Error-Github ]:                 https://github.com/hashicorp/packer/issues/9539#issuecomment-728378170
 [Aaron Berry Packer Article]:               https://dev.to/aaronktberry/creating-proxmox-templates-with-packer-1b35
 [Aaron Berry Article Repo]:                 https://github.com/Aaron-K-T-Berry/packer-ubuntu-proxmox-template
