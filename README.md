@@ -10,12 +10,12 @@
 
 - [Proxmox-VE](#proxmox-ve)
   - [Installation - Manual Step](#installation---manual-step)
+  - [Creating Ubuntu Image](#creating-ubuntu-image)
+    - [Creating Ubuntu Image Documents](#creating-ubuntu-image-documents)
   - [Installation - Script Step - Creating cloud-init Template](#installation---script-step---creating-cloud-init-template)
   - [Proxmox-VE Documents](#proxmox-ve-documents)
 - [Packer](#packer)
   - [Installing Packer on Ubuntu Jump Server](#installing-packer-on-ubuntu-jump-server)
-  - [Creating Ubuntu Image](#creating-ubuntu-image)
-    - [Creating Ubuntu Image Documents](#creating-ubuntu-image-documents)
   - [Preparing Proxmox-VE template via Packer](#preparing-proxmox-ve-template-via-packer)
     - [Packer **Input** Variables and `local` Variables](#packer-input-variables-and-local-variables)
   - [Packer Documents](#packer-documents)
@@ -59,48 +59,6 @@ It is an Open Source **Server Virtualization Platform**. [**Proxmox-VE**][Proxmo
 - Get latest updates
   - `apt update && apt upgrade -y && apt dist-upgrade`
 - **RESTART/REBOOT** System
-
-### Installation - Script Step - Creating cloud-init Template
-
-After installation to create cloud-init template(s) `create-template-via-cloudinit.sh` should be executed on Proxmox-VE Server(s). The script is based on the [create-cloud-template.sh][chriswayg-gist] developed by [chriswayg][chriswayg].
-
-|  No | `create-template-via-cloudinit.sh` Execution Prerequisites |
-| :-: | :--------------------------------------------------------- |
-|  1  |`create-template-via-cloudinit.sh` **should be executed on a Proxmox VE 6.x Server.** |
-|  2  |A DHCP Server should be active on `vmbr0`. |
-|  3  | **Download Latest Version of the Script on Proxmox VE Server:**<br> `curl https://raw.githubusercontent.com/BarisGece/mHC/main/proxmox-ve/create-template-via-cloudinit.sh > /usr/local/bin/create-template-via-cloudinit.sh && chmod -v +x /usr/local/bin/create-template-via-cloudinit.sh` |
-|  4  | **-- Caution! MUST BE DONE to USE cloud-init-config.yml --**<br> The cloud-init files need to be stored in a **snippet**. There is not detail information very well documented in [Proxmox-VE qm cloud_init][Proxomox-VE qm cloud_init] but [Alex Williams][AW Gist] kept us well informed. <ol><li>Go to `Storage View -> Storage -> Add -> Directory`</li><li>Give it an ID such as `snippets`, and specify any path on your host such as `/snippets`</li><li>Under `Content` choose `Snippets` and de-select `Disk image` (optional)</li><li>Upload (scp/rsync/whatever) your `user-data, meta-data, network-config` files to your _proxmox_ server in `/snippets/snippets/` (the directory should be there if you followed steps 1-3)</li></ol> Finally, you just need to `qm set` with `--cicustom`, like this:(If `cloud-init-config.yml` is present, the following command will run automatically in `create-template-via-cloudinit.sh`)<br> `qm set 100 --cicustom "user=snippets:snippets/user-data,network=snippets:snippets/network-config,meta=snippets:snippets/meta-data"` |
-|  4  | (optionally) Prepare a cloudinit **user-cloud-init-config.yml** in the working directory. For more information [Cloud-Init-Config Sample][Cloud-Init-Config Sample].<br> [sample-cloud-init-config.yml][sample-cloud-init-config.yml] can be used as a sample. |
-|  6  | To the migration to be completed successfully, the Proxmox Storage Configuration should be set as follows.<br> **local**(*Type - Directory*):<ul><li>***Content:*** **VZDump backup file, Disk image, ISO image, Container template**</li><li>***Path/Target:*** **/var/lib/vz**</li><li>***Shared:*** **Yes**</li></ul> **local-lvm**(*Type - LVM-Thin*):<ul><li>***Content:*** **Disk image, Container**</li><li>***Nodes:*** **Select ALL Nodes by one by**</li></ul> *All of them should be **ENABLED***<br> ![DC_Storage_Settings](./img/DC_Storage_Settings.png)  |
-|  7  | Run the Script:<br> `$ create-template-via-cloudinit.sh` |
-|  8  | Clone the Finished Template from the Proxmox GUI and Test. |
-
-### Proxmox-VE Documents
-
-- [Admin Guide - PDF][Admin Guide - PDF]
-- [Admin Guide - HTML][Admin Guide - HTML]
-- [Wiki Page][Wiki Page]
-- [Qemu/KVM(qm) Virtual Machines-Guide][Qemu/KVM(qm) Virtual Machines-Guide]
-- [Qemu/KVM(qm) VM Templates-Wiki][Qemu/KVM(qm) VM Templates-Wiki]
-- [Proxomox-VE qm Commands][Proxomox-VE qm Command Line Interface]
-- [Proxmox(qm) Cloud-Init Support-Guide][Proxmox(qm) Cloud-Init Support-Guide]
-- [Proxmox(qm) Cloud-Init Support-Wiki][Proxmox(qm) Cloud-Init Support-Wiki]
-- [Proxmox(qm) Cloud-Init Support FAQ-Wiki][Proxmox(qm) Cloud-Init Support FAQ-Wiki]
-- [Cloud-Init-Config Sample][Cloud-Init-Config Sample]
-- [Cloud-Init-Config Documentation][Cloud-Init-Config Documentation]
-
-## Packer
-
-Packer is an **automatic machine image generation** tool and ***Proxmox-VE templates*** will be created with ***Packer*** to make it more standardized and automated.
-
-### Installing Packer on Ubuntu Jump Server
-
-- Add the HashiCorp GPG key.
-  - `curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -`
-- Add the official HashiCorp Linux repository.
-  - `sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"`
-- Update and install.
-  - `sudo apt-get update && sudo apt-get install packer`
 
 ### Creating Ubuntu Image
 
@@ -147,6 +105,48 @@ To create images via ISO without using Cloud-Images, the following repositories 
 - [Automated Server Installs Config File Reference][Automated Server Installs Config File Reference]
 - [Ubuntu Cloud Images][Ubuntu Cloud Images]
 - [Ubuntu Enterprise Cloud - Images][Ubuntu Enterprise Cloud - Images]
+
+### Installation - Script Step - Creating cloud-init Template
+
+After installation to create cloud-init template(s) `create-template-via-cloudinit.sh` should be executed on Proxmox-VE Server(s). The script is based on the [create-cloud-template.sh][chriswayg-gist] developed by [chriswayg][chriswayg].
+
+|  No | `create-template-via-cloudinit.sh` Execution Prerequisites |
+| :-: | :--------------------------------------------------------- |
+|  1  |`create-template-via-cloudinit.sh` **should be executed on a Proxmox VE 6.x Server.** |
+|  2  |A DHCP Server should be active on `vmbr0`. |
+|  3  | **Download Latest Version of the Script on Proxmox VE Server:**<br> `curl https://raw.githubusercontent.com/BarisGece/mHC/main/proxmox-ve/create-template-via-cloudinit.sh > /usr/local/bin/create-template-via-cloudinit.sh && chmod -v +x /usr/local/bin/create-template-via-cloudinit.sh` |
+|  4  | **-- Caution! MUST BE DONE to USE cloud-init-config.yml --**<br> The cloud-init files need to be stored in a **snippet**. There is not detail information very well documented in [Proxmox-VE qm cloud_init][Proxomox-VE qm cloud_init] but [Alex Williams][AW Gist] kept us well informed. <ol><li>Go to `Storage View -> Storage -> Add -> Directory`</li><li>Give it an ID such as `snippets`, and specify any path on your host such as `/snippets`</li><li>Under `Content` choose `Snippets` and de-select `Disk image` (optional)</li><li>Upload (scp/rsync/whatever) your `user-data, meta-data, network-config` files to your _proxmox_ server in `/snippets/snippets/` (the directory should be there if you followed steps 1-3)</li></ol> Finally, you just need to `qm set` with `--cicustom`, like this:(If `cloud-init-config.yml` is present, the following command will run automatically in `create-template-via-cloudinit.sh`)<br> `qm set 100 --cicustom "user=snippets:snippets/user-data,network=snippets:snippets/network-config,meta=snippets:snippets/meta-data"` |
+|  4  | (optionally) Prepare a cloudinit **user-cloud-init-config.yml** in the working directory. For more information [Cloud-Init-Config Sample][Cloud-Init-Config Sample].<br> [sample-cloud-init-config.yml][sample-cloud-init-config.yml] can be used as a sample. |
+|  6  | To the migration to be completed successfully, the Proxmox Storage Configuration should be set as follows.<br> **local**(*Type - Directory*):<ul><li>***Content:*** **VZDump backup file, Disk image, ISO image, Container template**</li><li>***Path/Target:*** **/var/lib/vz**</li><li>***Shared:*** **Yes**</li></ul> **local-lvm**(*Type - LVM-Thin*):<ul><li>***Content:*** **Disk image, Container**</li><li>***Nodes:*** **Select ALL Nodes by one by**</li></ul> *All of them should be **ENABLED***<br> ![DC_Storage_Settings](./img/DC_Storage_Settings.png)  |
+|  7  | Run the Script:<br> `$ create-template-via-cloudinit.sh` |
+|  8  | Clone the Finished Template from the Proxmox GUI and Test. |
+
+### Proxmox-VE Documents
+
+- [Admin Guide - PDF][Admin Guide - PDF]
+- [Admin Guide - HTML][Admin Guide - HTML]
+- [Wiki Page][Wiki Page]
+- [Qemu/KVM(qm) Virtual Machines-Guide][Qemu/KVM(qm) Virtual Machines-Guide]
+- [Qemu/KVM(qm) VM Templates-Wiki][Qemu/KVM(qm) VM Templates-Wiki]
+- [Proxomox-VE qm Commands][Proxomox-VE qm Command Line Interface]
+- [Proxmox(qm) Cloud-Init Support-Guide][Proxmox(qm) Cloud-Init Support-Guide]
+- [Proxmox(qm) Cloud-Init Support-Wiki][Proxmox(qm) Cloud-Init Support-Wiki]
+- [Proxmox(qm) Cloud-Init Support FAQ-Wiki][Proxmox(qm) Cloud-Init Support FAQ-Wiki]
+- [Cloud-Init-Config Sample][Cloud-Init-Config Sample]
+- [Cloud-Init-Config Documentation][Cloud-Init-Config Documentation]
+
+## Packer
+
+Packer is an **automatic machine image generation** tool and ***Proxmox-VE templates*** will be created with ***Packer*** to make it more standardized and automated.
+
+### Installing Packer on Ubuntu Jump Server
+
+- Add the HashiCorp GPG key.
+  - `curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -`
+- Add the official HashiCorp Linux repository.
+  - `sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"`
+- Update and install.
+  - `sudo apt-get update && sudo apt-get install packer`
 
 ### Preparing Proxmox-VE template via Packer
 
