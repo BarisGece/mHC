@@ -185,7 +185,7 @@ In Packer, ***Assigning Values* to the build Variables** with *HCL2* can be done
   - The `variable` block, also called the `input-variable` block, defines variables within your *Packer* configuration.
   - **Debug** => `PACKER_LOG=1 packer build -debug -on-error=ask .`<br> **Release** => `PACKER_LOG=1 packer build .`
 
-***Locals***
+***Local Variables***
 
 An `input-variable` cannot be used in **another input variable**, so [**locals**][The locals block] could be used instead. The `locals` **block**, also called the `local-variable` **block**, defines locals within your Packer configuration. [Local Values][Local Values] assign a name to an expression, that can then be used multiple times within a folder.
 
