@@ -11,14 +11,11 @@
 - [Proxmox-VE](#proxmox-ve)
   - [Installation - Manual Step](#installation---manual-step)
   - [Creating Ubuntu Image](#creating-ubuntu-image)
-    - [Creating Ubuntu Image Documents](#creating-ubuntu-image-documents)
   - [Installation - Script Step - Creating cloud-init Template](#installation---script-step---creating-cloud-init-template)
-  - [Proxmox-VE Documents](#proxmox-ve-documents)
 - [Packer](#packer)
   - [Installing Packer on Ubuntu Jump Server](#installing-packer-on-ubuntu-jump-server)
   - [Preparing Proxmox-VE template via Packer](#preparing-proxmox-ve-template-via-packer)
     - [Packer **Input** Variables and `local` Variables](#packer-input-variables-and-local-variables)
-  - [Packer Documents](#packer-documents)
 
 ## Proxmox-VE
 
@@ -88,7 +85,8 @@ To create images via ISO without using Cloud-Images, the following repositories 
 [VM Templates for ubuntu]: https://github.com/boxcutter/ubuntu
 [Automated image builds with Jenkins, Packer, and Kubernetes]: https://cloud.google.com/solutions/automated-build-images-with-jenkins-kubernetes
 
-#### Creating Ubuntu Image Documents
+<details>
+<summary>Click to access<h4><strong>Creating Ubuntu Image Documents</strong></h4></summary>
 
 - **Install Ubuntu ISO images**
   - [releases of Ubuntu][releases of Ubuntu]
@@ -106,6 +104,8 @@ To create images via ISO without using Cloud-Images, the following repositories 
 - [Ubuntu Cloud Images][Ubuntu Cloud Images]
 - [Ubuntu Enterprise Cloud - Images][Ubuntu Enterprise Cloud - Images]
 
+</details>
+
 ### Installation - Script Step - Creating cloud-init Template
 
 After installation to create cloud-init template(s) `create-template-via-cloudinit.sh` should be executed on Proxmox-VE Server(s). The script is based on the [create-cloud-template.sh][chriswayg-gist] developed by [chriswayg][chriswayg].
@@ -121,7 +121,8 @@ After installation to create cloud-init template(s) `create-template-via-cloudin
 |  7  | Run the Script:<br> `$ create-template-via-cloudinit.sh` |
 |  8  | Clone the Finished Template from the Proxmox GUI and Test. |
 
-### Proxmox-VE Documents
+<details>
+<summary>Click to access<h3>Proxmox-VE Documents</h3></summary>
 
 - [Admin Guide - PDF][Admin Guide - PDF]
 - [Admin Guide - HTML][Admin Guide - HTML]
@@ -134,6 +135,8 @@ After installation to create cloud-init template(s) `create-template-via-cloudin
 - [Proxmox(qm) Cloud-Init Support FAQ-Wiki][Proxmox(qm) Cloud-Init Support FAQ-Wiki]
 - [Cloud-Init-Config Sample][Cloud-Init-Config Sample]
 - [Cloud-Init-Config Documentation][Cloud-Init-Config Documentation]
+
+<details>
 
 ## Packer
 
@@ -199,7 +202,8 @@ locals {
 }
 ```
 
-### Packer Documents
+<details>
+<summary>Click to access<h3>Packer Documents</h3></summary>
 
 - [Packer Proxmox Builder][Packer Proxmox Builder]
 - [proxmox-clone][proxmox-clone] **&** [proxmox-iso][proxmox-iso]
@@ -210,6 +214,8 @@ locals {
   - [Local Values][Local Values]
 - [Creating Proxmox Templates with Packer - Aaron Berry][Aaron Berry Packer Article]
   - [Article Github Repo][Aaron Berry Article Repo]
+
+<details>
 
 [Proxmox-VE]:                                      https://www.proxmox.com/
 [PVE-ISO]:                                         https://www.proxmox.com/en/downloads/category/iso-images-pve
