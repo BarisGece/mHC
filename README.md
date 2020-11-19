@@ -61,6 +61,7 @@ It is an open source **Server Virtualization Platform**. [Proxmox-VE][Proxmox-VE
 - Get latest updates
   - `apt update && apt upgrade -y && apt dist-upgrade`
 - **RESTART/REBOOT** System
+- For more information to [Create Proxmox-VE Cluster][Create Proxmox-VE Cluster]
 
 ---
 
@@ -240,6 +241,7 @@ locals {
 [Etcher]:                                                        https://www.balena.io/etcher/
 [PVE-Installation]:                                              https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_installation
 [PVE-LVM_Options]:                                               https://pve.proxmox.com/pve-docs/pve-admin-guide.html#advanced_lvm_options
+[Create Proxmox-VE Cluster]:                                     https://pve.proxmox.com/pve-docs/pve-admin-guide.html#pvecm_create_cluster
 [releases of Ubuntu]:                                            https://releases.ubuntu.com/
 [the cdimage server]:                                            https://cdimage.ubuntu.com/
 [old-releases of Ubuntu]:                                        https://old-releases.ubuntu.com/
