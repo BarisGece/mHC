@@ -15,7 +15,8 @@
 - [Packer](#packer)
   - [Installing Packer on Ubuntu Jump Server](#installing-packer-on-ubuntu-jump-server)
   - [Preparing Proxmox-VE template via Packer](#preparing-proxmox-ve-template-via-packer)
-    - [Packer **Input** Variables and `local` Variables](#packer-input-variables-and-local-variables)
+    - [Input Variables](#input-variables)
+    - [`local` Variables](#local-variables)
 
 ## Proxmox-VE
 
@@ -170,16 +171,16 @@ Packer is an **automatic machine image generation** tool and ***Proxmox-VE templ
 
 [Packer Proxmox Builder][Packer Proxmox Builder] will be used to create the *Proxmox-VE template*. It provision and configure the VM and then converts it into a template. *Packer Proxmox Builder* perfoms operations via the [Proxmox Web API][Proxmox Web API].
 
-Packer Proxmox Builder is able to create new images using both **ISO([proxmox-iso][proxmox-iso])** and existing **Cloud-Init Images([proxmox-clone][proxmox-clone])**. Creating a new image using **Packer([proxmox-iso][proxmox-iso])** will be developed later.
+Packer Proxmox Builder is able to create new images using both **ISO**([proxmox-iso][proxmox-iso]) and existing **Cloud-Init Images**([proxmox-clone][proxmox-clone]). Creating a new image using ([proxmox-iso][proxmox-iso]) will be developed later.
 
-Now, **Proxmox-VE templates** will be created with **Packer([proxmox-clone][proxmox-clone])** using **existing Cloud-Init Images** created via `create-template-via-cloudinit.sh`.
+Now, **Proxmox-VE templates** will be created with **proxmox-clone** using **existing Cloud-Init Images** created via `create-template-via-cloudinit.sh`.
 
-|  No | Packer Execution Prerequisites |
+|     | Packer Execution Prerequisites |
 | :-: | :----------------------------- |
 |  1  |To skip validating the certificate set `insecure_skip_tls_verify = true` in **sources.pkr.hcl** |
 |  2  |To Packer run sucessfully `qemu-guest-agent` must be installed on VMs & `qemu_agent = ...` configuration option should be `true` in `sources.pkr.hcl`<br> For more detail [Error getting SSH address 500 QEMU guest agent is not running][QEMU Agent Error-Github]|
 
-#### Packer **Input** Variables and `local` Variables
+#### Input Variables
 
 In Packer, ***Assigning Values* to the build Variables** with *HCL2* can be done in **3** different ways as follows  
 
@@ -203,7 +204,7 @@ In Packer, ***Assigning Values* to the build Variables** with *HCL2* can be done
   - The `variable` block, also called the `input-variable` block, defines variables within your *Packer* configuration.
   - **Debug** => `PACKER_LOG=1 packer build -debug -on-error=ask .`<br> **Release** => `PACKER_LOG=1 packer build .`
 
-***Local Variables***
+#### `local` Variables
 
 An `input-variable` cannot be used in **another input variable**, so [locals][The locals block] could be used instead. The `locals` **block**, also called the `local-variable` **block**, defines locals within your Packer configuration. [Local Values][Local Values] assign a name to an expression, that can then be used multiple times within a folder.
 
@@ -286,11 +287,11 @@ locals {
 [Proxmox Web API]:                                               https://pve.proxmox.com/wiki/Proxmox_VE_API
 [proxmox-clone]:                                                 https://www.packer.io/docs/builders/proxmox/clone
 [proxmox-iso]:                                                   https://www.packer.io/docs/builders/proxmox/iso
+[QEMU Agent Error-Github ]:                                      https://github.com/hashicorp/packer/issues/9539#issuecomment-728378170
+[The locals block]:                                              https://www.packer.io/docs/from-1.5/blocks/locals
+[Local Values]:                                                  https://www.packer.io/docs/from-1.5/locals
 [Input Variables and local variables]:                           https://www.packer.io/guides/hcl/variables
 [The variable block]:                                            https://www.packer.io/docs/from-1.5/blocks/variable
 [Input Variables]:                                               https://www.packer.io/docs/from-1.5/variables
-[The locals block]:                                              https://www.packer.io/docs/from-1.5/blocks/locals
-[Local Values]:                                                  https://www.packer.io/docs/from-1.5/locals
-[QEMU Agent Error-Github ]:                                      https://github.com/hashicorp/packer/issues/9539#issuecomment-728378170
 [Aaron Berry Packer Article]:                                    https://dev.to/aaronktberry/creating-proxmox-templates-with-packer-1b35
 [Aaron Berry Article Repo]:                                      https://github.com/Aaron-K-T-Berry/packer-ubuntu-proxmox-template
