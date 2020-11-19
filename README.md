@@ -73,17 +73,17 @@ Ubuntu also offers [Cloud Images][Ubuntu Cloud Images]. [**Ubuntu Cloud Images**
 <details>
 <summary><strong>To create Ubutu Images via ISO without using Cloud-Images, the following repositories and articles can be viewed</strong></summary>
 
-[Automated image builds with Jenkins, Packer, and Kubernetes][Automated image builds with Jenkins, Packer, and Kubernetes]
-[Automating Ubuntu 20.04 installs with Packer][Automating Ubuntu 20.04 installs with Packer]
-[Automating Ubuntu Server 20.04 with Packer][Automating Ubuntu Server 20.04 with Packer]
-[Packer build - Ubuntu Images(autoinstall & cloud-config)][Packer build - Ubuntu Images(autoinstall & cloud-config)]
-[Packer Ubuntu 20.04 Image(autoinstall & cloud-config)][Packer Ubuntu 20.04 Image(autoinstall & cloud-config)] 
-[Madalynn Packer - Ubuntu Image(autoinstall & cloud-config)][Madalynn Packer - Ubuntu Image(autoinstall & cloud-config)]
-[Packer Proxmox Ubuntu Templates(ansible & preseed)][Packer Proxmox Ubuntu Templates(ansible & preseed)]
-[Packer Boxes(ansible & preseed)][Packer Boxes(ansible & preseed)]
-[Packer Proxmox Ubuntu Templates(preseed)][Packer Proxmox Ubuntu Templates(preseed)]
-[Packer Ubuntu Templates(preseed)][Packer Ubuntu Templates(preseed)]
-[Packer Templates for Ubuntu(preseed)][Packer Templates for Ubuntu(preseed)]
+- [Automated image builds with Jenkins, Packer, and Kubernetes][Automated image builds with Jenkins, Packer, and Kubernetes]
+- [Automating Ubuntu 20.04 installs with Packer][Automating Ubuntu 20.04 installs with Packer]
+- [Automating Ubuntu Server 20.04 with Packer][Automating Ubuntu Server 20.04 with Packer]
+- [Packer build - Ubuntu Images(autoinstall & cloud-config)][Packer build - Ubuntu Images(autoinstall & cloud-config)]
+- [Packer Ubuntu 20.04 Image(autoinstall & cloud-config)][Packer Ubuntu 20.04 Image(autoinstall & cloud-config)] 
+- [Madalynn Packer - Ubuntu Image(autoinstall & cloud-config)][Madalynn Packer - Ubuntu Image(autoinstall & cloud-config)]
+- [Packer Proxmox Ubuntu Templates(ansible & preseed)][Packer Proxmox Ubuntu Templates(ansible & preseed)]
+- [Packer Boxes(ansible & preseed)][Packer Boxes(ansible & preseed)]
+- [Packer Proxmox Ubuntu Templates(preseed)][Packer Proxmox Ubuntu Templates(preseed)]
+- [Packer Ubuntu Templates(preseed)][Packer Ubuntu Templates(preseed)]
+- [Packer Templates for Ubuntu(preseed)][Packer Templates for Ubuntu(preseed)]
 
 </details>
 
