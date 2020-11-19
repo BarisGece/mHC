@@ -77,7 +77,7 @@ Ubuntu also offers [Cloud Images][Ubuntu Cloud Images]. [**Ubuntu Cloud Images**
 - [Automating Ubuntu 20.04 installs with Packer][Automating Ubuntu 20.04 installs with Packer]
 - [Automating Ubuntu Server 20.04 with Packer][Automating Ubuntu Server 20.04 with Packer]
 - [Packer build - Ubuntu Images(autoinstall & cloud-config)][Packer build - Ubuntu Images(autoinstall & cloud-config)]
-- [Packer Ubuntu 20.04 Image(autoinstall & cloud-config)][Packer Ubuntu 20.04 Image(autoinstall & cloud-config)] 
+- [Packer Ubuntu 20.04 Image(autoinstall & cloud-config)][Packer Ubuntu 20.04 Image(autoinstall & cloud-config)]
 - [Madalynn Packer - Ubuntu Image(autoinstall & cloud-config)][Madalynn Packer - Ubuntu Image(autoinstall & cloud-config)]
 - [Packer Proxmox Ubuntu Templates(ansible & preseed)][Packer Proxmox Ubuntu Templates(ansible & preseed)]
 - [Packer Boxes(ansible & preseed)][Packer Boxes(ansible & preseed)]
