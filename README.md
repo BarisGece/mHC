@@ -122,14 +122,14 @@ Ubuntu also offers ***Cloud Images***. [Ubuntu Cloud Images][Ubuntu Cloud Images
 
 After installation to create cloud-init template(s) `create-template-via-cloudinit.sh` should be executed on Proxmox-VE Server(s). The script is based on the [create-cloud-template.sh][chriswayg-gist] developed by [chriswayg][chriswayg].
 
-|  No | `create-template-via-cloudinit.sh` Execution Prerequisites |
+|     | `create-template-via-cloudinit.sh` Execution Prerequisites |
 | :-: | :--------------------------------------------------------- |
 |  1  |`create-template-via-cloudinit.sh` **should be executed on a Proxmox VE 6.x Server.** |
 |  2  |A DHCP Server should be active on `vmbr0`. |
 |  3  | **Download Latest Version of the Script on Proxmox VE Server:**<br> `curl https://raw.githubusercontent.com/BarisGece/mHC/main/proxmox-ve/create-template-via-cloudinit.sh > /usr/local/bin/create-template-via-cloudinit.sh && chmod -v +x /usr/local/bin/create-template-via-cloudinit.sh` |
 |  4  | **-- Caution! MUST BE DONE to USE cloud-init-config.yml --**<br> The cloud-init files need to be stored in a **snippet**. There is not detail information very well documented in [Proxmox-VE qm cloud_init][Proxomox-VE qm cloud_init] but [Alex Williams][AW Gist] kept us well informed. <ol><li>Go to `Storage View -> Storage -> Add -> Directory`</li><li>Give it an ID such as `snippets`, and specify any path on your host such as `/snippets`</li><li>Under `Content` choose `Snippets` and de-select `Disk image` (optional)</li><li>Upload (scp/rsync/whatever) your `user-data, meta-data, network-config` files to your _proxmox_ server in `/snippets/snippets/` (the directory should be there if you followed steps 1-3)</li></ol> Finally, you just need to `qm set` with `--cicustom`, like this:(If `cloud-init-config.yml` is present, the following command will run automatically in `create-template-via-cloudinit.sh`)<br> `qm set 100 --cicustom "user=snippets:snippets/user-data,network=snippets:snippets/network-config,meta=snippets:snippets/meta-data"` |
-|  4  | (optionally) Prepare a cloudinit **user-cloud-init-config.yml** in the working directory. For more information [Cloud-Init-Config Sample][Cloud-Init-Config Sample].<br> [sample-cloud-init-config.yml][sample-cloud-init-config.yml] can be used as a sample. |
-|  6  | To the migration to be completed successfully, the Proxmox Storage Configuration should be set as follows.<br> **local**(*Type - Directory*):<ul><li>***Content:*** **VZDump backup file, Disk image, ISO image, Container template**</li><li>***Path/Target:*** **/var/lib/vz**</li><li>***Shared:*** **Yes**</li></ul> **local-lvm**(*Type - LVM-Thin*):<ul><li>***Content:*** **Disk image, Container**</li><li>***Nodes:*** **Select ALL Nodes by one by**</li></ul> *All of them should be **ENABLED***<br> ![DC_Storage_Settings](./img/DC_Storage_Settings.png)  |
+|  5  | Prepare a cloudinit **user-cloud-init-config.yml** in the working directory. [sample-cloud-init-config.yml][sample-cloud-init-config.yml] can be used as a sample.<br> For more information [Cloud-Init-Config Sample][Cloud-Init-Config Sample]. |
+|  6  | To the migration to be completed successfully, the Proxmox Storage Configuration should be set as follows.<br> **local**(*Type - Directory*):<ul><li>***Content:*** **VZDump backup file, Disk image, ISO image, Container template**</li><li>***Path/Target:*** **/var/lib/vz**</li><li>***Shared:*** **Yes**</li></ul> **local-lvm**(*Type - LVM-Thin*):<ul><li>***Content:*** **Disk image, Container**</li><li>***Nodes:*** **Select ALL Nodes by one by**</li></ul> **snippets**(*Type - Directory*):<ul><li>***Content:*** **Snippets**</li><li>***Path/Target:*** **/snippets**</li><li>***Nodes:*** **Select ALL Nodes by one by**</li></ul> *All of them should be **ENABLED***<br> ![DC_Storage_Settings](./img/DC_Storage_Settings.png)  |
 |  7  | Run the Script:<br> `$ create-template-via-cloudinit.sh` |
 |  8  | Clone the Finished Template from the Proxmox GUI and Test. |
 
@@ -270,8 +270,8 @@ locals {
 [chriswayg-gist]:                                                https://gist.github.com/chriswayg/43fbea910e024cbe608d7dcb12cb8466
 [Proxomox-VE qm cloud_init]:                                     https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_cloud_init
 [AW Gist]:                                                       https://gist.github.com/aw/ce460c2100163c38734a83e09ac0439a
-[Cloud-Init-Config Sample]:                                      https://cloudinit.readthedocs.io/en/latest/topics/examples.html#yaml-examples
 [sample-cloud-init-config.yml]:                                  https://raw.githubusercontent.com/BarisGece/mHC/main/proxmox-ve/sample-cloud-init-config.yml
+[Cloud-Init-Config Sample]:                                      https://cloudinit.readthedocs.io/en/latest/topics/examples.html#yaml-examples
 [Admin Guide - PDF]:                                             https://proxmox.com/en/downloads/item/proxmox-ve-admin-guide-for-6-x
 [Admin Guide - HTML]:                                            https://pve.proxmox.com/pve-docs/pve-admin-guide.html
 [Wiki Page]:                                                     https://pve.proxmox.com/wiki/Main_Page
