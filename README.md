@@ -74,12 +74,11 @@ Fully automated installations are possible on Ubuntu using [Ubuntu Installer(deb
 - The Ubuntu Installer (based on the Debian Installer, and so often called simply **debian-installer** or just **d-i)** consists of a number of special-purpose components to perform each installation task. The debian-installer(*d-i)*) supports automating installs via **preconfiguration(*preseed.cfg*) files**. Preseeding method provides a way to set answers to questions asked during the installation process, without having to manually enter the answers while the installation is running. For more information visit [Automating the Installation using Preseeding][Automating the Installation using Preseeding], [Example Preseed File][Example Preseed File] and [Packer Preseed Ubuntu][Packer Preseed Ubuntu].
 - However, Ubuntu [announced][Server installer plans for 20.04 LTS] that it will complete the transition to **the Live Server Installer**(*autoinstall)* with 20.04 LTS. It lets you answer all those configuration questions ahead of time with an ***autoinstall config*** and lets the installation process run without any interaction. The *autoinstall config* is provided via [cloud-init configuration][Cloud-Init-Config Documentation], which is almost endlessly flexible. [The live server installer is now the preferred media to install](https://wiki.ubuntu.com/FocalFossa/ReleaseNotes#Installer) Ubuntu Server on all architectures. For more information visit [Ubuntu Autoinstall Quick Start][Ubuntu Autoinstall Quick Start] and [Automated Server Installs Config File Reference][Automated Server Installs Config File Reference]
 
-Ubuntu also offers ***Cloud Images***. [Ubuntu Cloud Images][Ubuntu Cloud Images] are the *official Ubuntu images* and are *pre-installed disk images* that have been customized by ***Ubuntu engineering to run on public clouds that provide Ubuntu Certified Images, Openstack, LXD, and more***. It will be used in `create-template-via-cloudinit.sh` due to the **fast** and **easy** setup.
+Ubuntu also offers ***Cloud Images***. [Ubuntu Cloud Images][Ubuntu Cloud Images] are the *official Ubuntu images* and are *pre-installed disk images* that have been customized by ***Ubuntu engineering to run on public clouds that provide Ubuntu Certified Images, Openstack, LXD, and more***. It will be used in [`create-template-via-cloudinit.sh`](#installation---script-step---creating-cloud-init-template) due to the **fast** and **easy** setup.
 
 <details>
-<summary><strong>To create Ubutu Images via ISO without using Cloud-Images, the following repositories and articles can be viewed</strong></summary>
+<summary><strong>To create Ubuntu Images via ISO without using Cloud-Images, the following repositories and articles can be viewed</strong></summary>
 
-- [Automated image builds with Jenkins, Packer, and Kubernetes][Automated image builds with Jenkins, Packer, and Kubernetes]
 - [Automating Ubuntu 20.04 installs with Packer][Automating Ubuntu 20.04 installs with Packer]
 - [Automating Ubuntu Server 20.04 with Packer][Automating Ubuntu Server 20.04 with Packer]
 - [Packer build - Ubuntu Images(autoinstall & cloud-config)][Packer build - Ubuntu Images(autoinstall & cloud-config)]
@@ -90,6 +89,7 @@ Ubuntu also offers ***Cloud Images***. [Ubuntu Cloud Images][Ubuntu Cloud Images
 - [Packer Proxmox Ubuntu Templates(preseed)][Packer Proxmox Ubuntu Templates(preseed)]
 - [Packer Ubuntu Templates(preseed)][Packer Ubuntu Templates(preseed)]
 - [Packer Templates for Ubuntu(preseed)][Packer Templates for Ubuntu(preseed)]
+- [Automated image builds with Jenkins, Packer, and Kubernetes][Automated image builds with Jenkins, Packer, and Kubernetes]
 
 </details>
 
@@ -255,7 +255,6 @@ locals {
 [Automated Server Installs Config File Reference]:               https://ubuntu.com/server/docs/install/autoinstall-reference
 [Ubuntu Cloud Images]:                                           https://cloud-images.ubuntu.com/
 [Ubuntu Enterprise Cloud - Images]:                              https://help.ubuntu.com/community/UEC/Images
-[Automated image builds with Jenkins, Packer, and Kubernetes]:   https://cloud.google.com/solutions/automated-build-images-with-jenkins-kubernetes
 [Automating Ubuntu 20.04 installs with Packer]:                  https://nickcharlton.net/posts/automating-ubuntu-2004-installs-with-packer.html
 [Automating Ubuntu Server 20.04 with Packer]:                    https://beryju.org/blog/automating-ubuntu-server-20-04-with-packer
 [Packer build - Ubuntu Images(autoinstall & cloud-config)]:      https://github.com/tylert/packer-build
@@ -266,6 +265,7 @@ locals {
 [Packer Proxmox Ubuntu Templates(preseed)]:                      https://github.com/Aaron-K-T-Berry/packer-ubuntu-proxmox-template
 [Packer Ubuntu Templates(preseed)]:                              https://github.com/chef/bento/tree/master/packer_templates/ubuntu
 [Packer Templates for Ubuntu(preseed)]:                          https://github.com/boxcutter/ubuntu
+[Automated image builds with Jenkins, Packer, and Kubernetes]:   https://cloud.google.com/solutions/automated-build-images-with-jenkins-kubernetes
 [chriswayg]:                                                     https://github.com/chriswayg
 [chriswayg-gist]:                                                https://gist.github.com/chriswayg/43fbea910e024cbe608d7dcb12cb8466
 [Proxomox-VE qm cloud_init]:                                     https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_cloud_init
