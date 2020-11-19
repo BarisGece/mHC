@@ -86,7 +86,7 @@ To create images via ISO without using Cloud-Images, the following repositories 
 [Automated image builds with Jenkins, Packer, and Kubernetes]: https://cloud.google.com/solutions/automated-build-images-with-jenkins-kubernetes
 
 <details>
-<summary>Click to access<h4><strong>Creating Ubuntu Image Documents</strong></h4></summary>
+<summary><strong>Creating Ubuntu Image Documents</strong></summary>
 
 - **Install Ubuntu ISO images**
   - [releases of Ubuntu][releases of Ubuntu]
@@ -122,7 +122,7 @@ After installation to create cloud-init template(s) `create-template-via-cloudin
 |  8  | Clone the Finished Template from the Proxmox GUI and Test. |
 
 <details>
-<summary>Click to access<h3>Proxmox-VE Documents</h3></summary>
+<summary><strong>Proxmox-VE Documents</strong></summary>
 
 - [Admin Guide - PDF][Admin Guide - PDF]
 - [Admin Guide - HTML][Admin Guide - HTML]
@@ -136,7 +136,7 @@ After installation to create cloud-init template(s) `create-template-via-cloudin
 - [Cloud-Init-Config Sample][Cloud-Init-Config Sample]
 - [Cloud-Init-Config Documentation][Cloud-Init-Config Documentation]
 
-<details>
+</details>
 
 ## Packer
 
@@ -203,7 +203,7 @@ locals {
 ```
 
 <details>
-<summary>Click to access<h3>Packer Documents</h3></summary>
+<summary><strong>Packer Documents</strong></summary>
 
 - [Packer Proxmox Builder][Packer Proxmox Builder]
 - [proxmox-clone][proxmox-clone] **&** [proxmox-iso][proxmox-iso]
@@ -215,7 +215,7 @@ locals {
 - [Creating Proxmox Templates with Packer - Aaron Berry][Aaron Berry Packer Article]
   - [Article Github Repo][Aaron Berry Article Repo]
 
-<details>
+</details>
 
 [Proxmox-VE]:                                      https://www.proxmox.com/
 [PVE-ISO]:                                         https://www.proxmox.com/en/downloads/category/iso-images-pve
