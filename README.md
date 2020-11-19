@@ -2,7 +2,7 @@
   <img src="./img/mHC.png" alt="mini Home Cloud" width="253">
 </div>
 
-<p align="center">The easy-way to create and manage a Mini Home Cloud. mHC is built using <strong>Shell</strong>, <a href="#Proxmox-VE"><strong>Proxmox-VE</strong></a>, <strong><a href="#Packer">Packer</a></strong>, <strong>Terraform</strong>, <strong>Ansible</strong> and is not completely reliable for <em><strong>Production</strong></em> environments.</p>
+<p align="center">The easy-way to create and manage a personal cloud envirnoment. mHC has been created using <strong>Shell</strong>, <a href="#Proxmox-VE"><strong>Proxmox-VE</strong></a>, <strong><a href="#Packer">Packer</a></strong>, <strong>Terraform</strong>, <strong>Ansible</strong> and is not completely reliable for <em><strong>Production</strong></em> environments.</p>
 
 # <!-- omit in toc -->
 
@@ -19,9 +19,11 @@
 
 ## Proxmox-VE
 
-It is an Open Source **Server Virtualization Platform**. [**Proxmox-VE**][Proxmox-VE] includes two different virtualization technologies which are **Kernel-Based Virtual Machine *(KVM)*** and **Container-Based Virtualization *(LXC)***. *Proxmox-VE* can run on a **single node**, or **assemble a cluster of many nodes**. This way, your virtual machines and containers can run on proxmox with high availability.
+It is an open source **Server Virtualization Platform**. [**Proxmox-VE**][Proxmox-VE] includes two different virtualization technologies which are **Kernel-Based Virtual Machine *(KVM)*** and **Container-Based Virtualization *(LXC)***. *Proxmox-VE* can run on a **single node**, or **assemble a cluster of many nodes**. This way, your virtual machines and containers can run on Proxmox-VE with high availability.
 
-![Proxmox-VE Architecture](./img/Proxmox-VE_Architecture.svg)
+<div id="mHC" align="center">
+  <img src="./img/Proxmox-VE_Architecture.svg" alt="Proxmox-VE Architecture">
+</div>
 
 ### Installation - Manual Step
 
