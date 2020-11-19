@@ -68,22 +68,26 @@ Fully automated installations are possible on Ubuntu using [**Ubuntu Installer(d
 - The Ubuntu Installer (based on the Debian Installer, and so often called simply **debian-installer** or just **d-i)** consists of a number of special-purpose components to perform each installation task. The **debian-installer(*d-i)*)** supports automating installs via **preconfiguration(*preseed.cfg*) files**. **Preseeding method** provides a way to set answers to questions asked during the installation process, without having to manually enter the answers while the installation is running. For more information visit [**Automating the Installation using Preseeding**][Automating the Installation using Preseeding], [**Example Preseed File**][Example Preseed File] and [Packer Preseed Ubuntu][Packer Preseed Ubuntu].
 - However, Ubuntu [**announced**][Server installer plans for 20.04 LTS] that it will complete the transition to [**the Live Server Installer**(autoinstall)][Ubuntu Live Server Installer(autoinstall)] with 20.04 LTS. [**autoinstall**][Ubuntu Live Server Installer(autoinstall)] lets you answer all those configuration questions ahead of time with an ***autoinstall config*** and lets the installation process run without any interaction. The *autoinstall config* is provided via **cloud-init configuration**, which is almost endlessly flexible. [The live server installer is now the preferred media to install](https://wiki.ubuntu.com/FocalFossa/ReleaseNotes#Installer) Ubuntu Server on all architectures. For more information visit [Ubuntu Autoinstall Quick Start][Ubuntu Autoinstall Quick Start] and [Automated Server Installs Config File Reference][Automated Server Installs Config File Reference]
 
-Ubuntu also offers [Cloud Images][Ubuntu Cloud Images]. [**Ubuntu Cloud Images**][Ubuntu Cloud Images] are the *official Ubuntu images* and are *pre-installed disk images* that have been customized by ***Ubuntu engineering to run on public clouds that provide Ubuntu Certified Images, Openstack, LXD, and more***. [**Ubuntu Cloud Images**][Ubuntu Cloud Images] will be used in `create-template-via-cloudinit.sh` due to the **fast** and **easy** setup. Since the ISO is not used, it has been developed with the packer proxmox-clone provider.
+Ubuntu also offers [Cloud Images][Ubuntu Cloud Images]. [**Ubuntu Cloud Images**][Ubuntu Cloud Images] are the *official Ubuntu images* and are *pre-installed disk images* that have been customized by ***Ubuntu engineering to run on public clouds that provide Ubuntu Certified Images, Openstack, LXD, and more***. [**Ubuntu Cloud Images**][Ubuntu Cloud Images] will be used in `create-template-via-cloudinit.sh` due to the **fast** and **easy** setup.
 
-To create images via ISO without using Cloud-Images, the following repositories and articles can be viewed.
+<details>
+<summary><strong>To create Ubutu Images via ISO without using Cloud-Images, the following repositories and articles can be viewed</strong></summary>
 
-[**Ansible**-proxmox]: https://github.com/chriswayg/ansible-proxmox
-[packer build images]: https://github.com/tylert/packer-build
-[packer-image]: https://github.com/nickcharlton/packer-ubuntu-2004
-[ubuntu packer preseed templates]: https://github.com/chef/bento/tree/master/packer_templates/ubuntu
-[Aaron Berry Article Repo]: https://github.com/Aaron-K-T-Berry/packer-ubuntu-proxmox-template
-[packer-proxmox-templates]: https://github.com/chriswayg/packer-proxmox-templates
-[B]: https://github.com/aerialls/madalynn-packer/blob/master/ubuntu-20.04/ubuntu.json
-[packer-boxes]: https://github.com/geerlingguy/packer-boxes/blob/master/ubuntu2004/box-config.json
-[Automating Ubuntu 20.04 installs with Packer]: https://nickcharlton.net/posts/automating-ubuntu-2004-installs-with-packer.html
-[Automating Ubuntu Server 20.04 with Packer]: https://beryju.org/blog/automating-ubuntu-server-20-04-with-packer
-[VM Templates for ubuntu]: https://github.com/boxcutter/ubuntu
-[Automated image builds with Jenkins, Packer, and Kubernetes]: https://cloud.google.com/solutions/automated-build-images-with-jenkins-kubernetes
+[Automated image builds with Jenkins, Packer, and Kubernetes][Automated image builds with Jenkins, Packer, and Kubernetes]
+[Automating Ubuntu 20.04 installs with Packer][Automating Ubuntu 20.04 installs with Packer]
+[Automating Ubuntu Server 20.04 with Packer][Automating Ubuntu Server 20.04 with Packer]
+[Packer build - Ubuntu Images(autoinstall & cloud-config)][Packer build - Ubuntu Images(autoinstall & cloud-config)]
+[Packer Ubuntu 20.04 Image(autoinstall & cloud-config)][Packer Ubuntu 20.04 Image(autoinstall & cloud-config)] 
+[Madalynn Packer - Ubuntu Image(autoinstall & cloud-config)][Madalynn Packer - Ubuntu Image(autoinstall & cloud-config)]
+[Packer Proxmox Ubuntu Templates(ansible & preseed)][Packer Proxmox Ubuntu Templates(ansible & preseed)]
+[Packer Boxes(ansible & preseed)][Packer Boxes(ansible & preseed)]
+[Packer Proxmox Ubuntu Templates(preseed)][Packer Proxmox Ubuntu Templates(preseed)]
+[Packer Ubuntu Templates(preseed)][Packer Ubuntu Templates(preseed)]
+[Packer Templates for Ubuntu(preseed)][Packer Templates for Ubuntu(preseed)]
+
+</details>
+
+---
 
 <details>
 <summary><strong>Creating Ubuntu Image Documents</strong></summary>
@@ -105,6 +109,8 @@ To create images via ISO without using Cloud-Images, the following repositories 
 - [Ubuntu Enterprise Cloud - Images][Ubuntu Enterprise Cloud - Images]
 
 </details>
+
+---
 
 ### Installation - Script Step - Creating cloud-init Template
 
@@ -135,8 +141,11 @@ After installation to create cloud-init template(s) `create-template-via-cloudin
 - [Proxmox(qm) Cloud-Init Support FAQ-Wiki][Proxmox(qm) Cloud-Init Support FAQ-Wiki]
 - [Cloud-Init-Config Sample][Cloud-Init-Config Sample]
 - [Cloud-Init-Config Documentation][Cloud-Init-Config Documentation]
+- [Ansible role to configure Proxmox server][Ansible role to configure Proxmox server]
 
 </details>
+
+---
 
 ## Packer
 
@@ -217,51 +226,65 @@ locals {
 
 </details>
 
-[Proxmox-VE]:                                      https://www.proxmox.com/
-[PVE-ISO]:                                         https://www.proxmox.com/en/downloads/category/iso-images-pve
-[Etcher]:                                          https://www.balena.io/etcher/
-[PVE-Installation]:                                https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_installation
-[PVE-LVM_Options]:                                 https://pve.proxmox.com/pve-docs/pve-admin-guide.html#advanced_lvm_options
-[chriswayg]:                                       https://github.com/chriswayg
-[chriswayg-gist]:                                  https://gist.github.com/chriswayg/43fbea910e024cbe608d7dcb12cb8466
-[Proxomox-VE qm cloud_init]:                       https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_cloud_init
-[AW Gist]:                                         https://gist.github.com/aw/ce460c2100163c38734a83e09ac0439a
-[Cloud-Init-Config Sample]:                        https://cloudinit.readthedocs.io/en/latest/topics/examples.html#yaml-examples
-[Cloud-Init-Config Documentation]:                 https://cloudinit.readthedocs.io/en/latest/
-[sample-cloud-init-config.yml]:                    https://raw.githubusercontent.com/BarisGece/mHC/main/proxmox-ve/sample-cloud-init-config.yml
-[Admin Guide - PDF]:                               https://proxmox.com/en/downloads/item/proxmox-ve-admin-guide-for-6-x
-[Admin Guide - HTML]:                              https://pve.proxmox.com/pve-docs/pve-admin-guide.html
-[Wiki Page]:                                       https://pve.proxmox.com/wiki/Main_Page
-[Qemu/KVM(qm) Virtual Machines-Guide]:             https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_virtual_machines
-[Qemu/KVM(qm) VM Templates-Wiki]:                  https://pve.proxmox.com/wiki/Qemu/KVM_Virtual_Machines#qm_templates
-[Proxomox-VE qm Command Line Interface]:           https://pve.proxmox.com/pve-docs/qm.1.html
-[Proxmox(qm) Cloud-Init Support-Guide]:            https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_cloud_init
-[Proxmox(qm) Cloud-Init Support-Wiki]:             https://pve.proxmox.com/wiki/Cloud-Init_Support
-[Proxmox(qm) Cloud-Init Support FAQ-Wiki]:         https://pve.proxmox.com/wiki/Cloud-Init_FAQ
-[releases of Ubuntu]:                              https://releases.ubuntu.com/
-[the cdimage server]:                              https://cdimage.ubuntu.com/
-[old-releases of Ubuntu]:                          https://old-releases.ubuntu.com/
-[Ubuntu Server Guide]:                             https://ubuntu.com/server/docs
-[Ubuntu Installation Guide]:                       https://help.ubuntu.com/lts/installation-guide
-[Ubuntu Installer(debian-installer)]:              https://help.ubuntu.com/lts/installation-guide/amd64/ch06s01.html
-[Ubuntu Live Server Installer(autoinstall)]:       https://ubuntu.com/server/docs/install/autoinstall
-[Automating the Installation using Preseeding]:    https://help.ubuntu.com/lts/installation-guide/amd64/apb.html
-[Example Preseed File]:                            https://help.ubuntu.com/lts/installation-guide/example-preseed.txt
-[Packer Preseed Ubuntu]:                           https://www.packer.io/guides/automatic-operating-system-installs/preseed_ubuntu.html
-[Server installer plans for 20.04 LTS]:            https://discourse.ubuntu.com/t/server-installer-plans-for-20-04-lts/13631
-[Ubuntu Autoinstall Quick Start]:                  https://ubuntu.com/server/docs/install/autoinstall-quickstart
-[Automated Server Installs Config File Reference]: https://ubuntu.com/server/docs/install/autoinstall-reference
-[Ubuntu Cloud Images]:                             https://cloud-images.ubuntu.com/
-[Ubuntu Enterprise Cloud - Images]:                https://help.ubuntu.com/community/UEC/Images
-[Packer Proxmox Builder]:                          https://www.packer.io/docs/builders/proxmox.html
-[Proxmox Web API]:                                 https://pve.proxmox.com/wiki/Proxmox_VE_API
-[proxmox-clone]:                                   https://www.packer.io/docs/builders/proxmox/clone
-[proxmox-iso]:                                     https://www.packer.io/docs/builders/proxmox/iso
-[Input Variables and local variables]:             https://www.packer.io/guides/hcl/variables
-[The variable block]:                              https://www.packer.io/docs/from-1.5/blocks/variable
-[Input Variables]:                                 https://www.packer.io/docs/from-1.5/variables
-[The locals block]:                                https://www.packer.io/docs/from-1.5/blocks/locals
-[Local Values]:                                    https://www.packer.io/docs/from-1.5/locals
-[QEMU Agent Error-Github ]:                        https://github.com/hashicorp/packer/issues/9539#issuecomment-728378170
-[Aaron Berry Packer Article]:                      https://dev.to/aaronktberry/creating-proxmox-templates-with-packer-1b35
-[Aaron Berry Article Repo]:                        https://github.com/Aaron-K-T-Berry/packer-ubuntu-proxmox-template
+---
+
+[Proxmox-VE]:                                                    https://www.proxmox.com/
+[PVE-ISO]:                                                       https://www.proxmox.com/en/downloads/category/iso-images-pve
+[Etcher]:                                                        https://www.balena.io/etcher/
+[PVE-Installation]:                                              https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_installation
+[PVE-LVM_Options]:                                               https://pve.proxmox.com/pve-docs/pve-admin-guide.html#advanced_lvm_options
+[Automated image builds with Jenkins, Packer, and Kubernetes]:   https://cloud.google.com/solutions/automated-build-images-with-jenkins-kubernetes
+[Automating Ubuntu 20.04 installs with Packer]:                  https://nickcharlton.net/posts/automating-ubuntu-2004-installs-with-packer.html
+[Automating Ubuntu Server 20.04 with Packer]:                    https://beryju.org/blog/automating-ubuntu-server-20-04-with-packer
+[Packer build - Ubuntu Images(autoinstall & cloud-config)]:      https://github.com/tylert/packer-build
+[Packer Ubuntu 20.04 Image(autoinstall & cloud-config)]:         https://github.com/nickcharlton/packer-ubuntu-2004
+[Madalynn Packer - Ubuntu Image(autoinstall & cloud-config)]:    https://github.com/aerialls/madalynn-packer
+[Packer Proxmox Ubuntu Templates(ansible & preseed)]:            https://github.com/chriswayg/packer-proxmox-templates
+[Packer Boxes(ansible & preseed)]:                               https://github.com/geerlingguy/packer-boxes/blob/master/ubuntu2004/box-config.json
+[Packer Proxmox Ubuntu Templates(preseed)]:                      https://github.com/Aaron-K-T-Berry/packer-ubuntu-proxmox-template
+[Packer Ubuntu Templates(preseed)]:                              https://github.com/chef/bento/tree/master/packer_templates/ubuntu
+[Packer Templates for Ubuntu(preseed)]:                          https://github.com/boxcutter/ubuntu
+[releases of Ubuntu]:                                            https://releases.ubuntu.com/
+[the cdimage server]:                                            https://cdimage.ubuntu.com/
+[old-releases of Ubuntu]:                                        https://old-releases.ubuntu.com/
+[Ubuntu Server Guide]:                                           https://ubuntu.com/server/docs
+[Ubuntu Installation Guide]:                                     https://help.ubuntu.com/lts/installation-guide
+[Ubuntu Installer(debian-installer)]:                            https://help.ubuntu.com/lts/installation-guide/amd64/ch06s01.html
+[Ubuntu Live Server Installer(autoinstall)]:                     https://ubuntu.com/server/docs/install/autoinstall
+[Automating the Installation using Preseeding]:                  https://help.ubuntu.com/lts/installation-guide/amd64/apb.html
+[Example Preseed File]:                                          https://help.ubuntu.com/lts/installation-guide/example-preseed.txt
+[Packer Preseed Ubuntu]:                                         https://www.packer.io/guides/automatic-operating-system-installs/preseed_ubuntu.html
+[Server installer plans for 20.04 LTS]:                          https://discourse.ubuntu.com/t/server-installer-plans-for-20-04-lts/13631
+[Ubuntu Autoinstall Quick Start]:                                https://ubuntu.com/server/docs/install/autoinstall-quickstart
+[Automated Server Installs Config File Reference]:               https://ubuntu.com/server/docs/install/autoinstall-reference
+[Ubuntu Cloud Images]:                                           https://cloud-images.ubuntu.com/
+[Ubuntu Enterprise Cloud - Images]:                              https://help.ubuntu.com/community/UEC/Images
+[chriswayg]:                                                     https://github.com/chriswayg
+[chriswayg-gist]:                                                https://gist.github.com/chriswayg/43fbea910e024cbe608d7dcb12cb8466
+[Proxomox-VE qm cloud_init]:                                     https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_cloud_init
+[AW Gist]:                                                       https://gist.github.com/aw/ce460c2100163c38734a83e09ac0439a
+[Cloud-Init-Config Sample]:                                      https://cloudinit.readthedocs.io/en/latest/topics/examples.html#yaml-examples
+[Cloud-Init-Config Documentation]:                               https://cloudinit.readthedocs.io/en/latest/
+[sample-cloud-init-config.yml]:                                  https://raw.githubusercontent.com/BarisGece/mHC/main/proxmox-ve/sample-cloud-init-config.yml
+[Admin Guide - PDF]:                                             https://proxmox.com/en/downloads/item/proxmox-ve-admin-guide-for-6-x
+[Admin Guide - HTML]:                                            https://pve.proxmox.com/pve-docs/pve-admin-guide.html
+[Wiki Page]:                                                     https://pve.proxmox.com/wiki/Main_Page
+[Qemu/KVM(qm) Virtual Machines-Guide]:                           https://pve.proxmox.com/pve-docs/pve-admin-guide.html#chapter_virtual_machines
+[Qemu/KVM(qm) VM Templates-Wiki]:                                https://pve.proxmox.com/wiki/Qemu/KVM_Virtual_Machines#qm_templates
+[Proxomox-VE qm Command Line Interface]:                         https://pve.proxmox.com/pve-docs/qm.1.html
+[Proxmox(qm) Cloud-Init Support-Guide]:                          https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_cloud_init
+[Proxmox(qm) Cloud-Init Support-Wiki]:                           https://pve.proxmox.com/wiki/Cloud-Init_Support
+[Proxmox(qm) Cloud-Init Support FAQ-Wiki]:                       https://pve.proxmox.com/wiki/Cloud-Init_FAQ
+[Ansible role to configure Proxmox server]:                      https://github.com/chriswayg/ansible-proxmox
+[Packer Proxmox Builder]:                                        https://www.packer.io/docs/builders/proxmox.html
+[Proxmox Web API]:                                               https://pve.proxmox.com/wiki/Proxmox_VE_API
+[proxmox-clone]:                                                 https://www.packer.io/docs/builders/proxmox/clone
+[proxmox-iso]:                                                   https://www.packer.io/docs/builders/proxmox/iso
+[Input Variables and local variables]:                           https://www.packer.io/guides/hcl/variables
+[The variable block]:                                            https://www.packer.io/docs/from-1.5/blocks/variable
+[Input Variables]:                                               https://www.packer.io/docs/from-1.5/variables
+[The locals block]:                                              https://www.packer.io/docs/from-1.5/blocks/locals
+[Local Values]:                                                  https://www.packer.io/docs/from-1.5/locals
+[QEMU Agent Error-Github ]:                                      https://github.com/hashicorp/packer/issues/9539#issuecomment-728378170
+[Aaron Berry Packer Article]:                                    https://dev.to/aaronktberry/creating-proxmox-templates-with-packer-1b35
+[Aaron Berry Article Repo]:                                      https://github.com/Aaron-K-T-Berry/packer-ubuntu-proxmox-template
