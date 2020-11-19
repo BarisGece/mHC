@@ -19,7 +19,7 @@
 
 ## Proxmox-VE
 
-It is an open source **Server Virtualization Platform**. [**Proxmox-VE**][Proxmox-VE] includes two different virtualization technologies which are **Kernel-Based Virtual Machine *(KVM)*** and **Container-Based Virtualization *(LXC)***. *Proxmox-VE* can run on a **single node**, or **assemble a cluster of many nodes**. This way, your virtual machines and containers can run on Proxmox-VE with high availability.
+It is an open source **Server Virtualization Platform**. [Proxmox-VE][Proxmox-VE] includes two different virtualization technologies which are **Kernel-Based Virtual Machine *(KVM)*** and **Container-Based Virtualization *(LXC)***. *Proxmox-VE* can run on a **single node**, or **assemble a cluster of many nodes**. This way, your virtual machines and containers can run on Proxmox-VE with high availability.
 
 <div id="mHC" align="center">
   <img src="./img/Proxmox-VE_Architecture.svg" alt="Proxmox-VE Architecture">
@@ -61,18 +61,20 @@ It is an open source **Server Virtualization Platform**. [**Proxmox-VE**][Proxmo
   - `apt update && apt upgrade -y && apt dist-upgrade`
 - **RESTART/REBOOT** System
 
+---
+
 ### Creating Ubuntu Image
 
-**Ubuntu ISO images** can be downloaded from [**releases of Ubuntu**][releases of Ubuntu]. For ***popular architectures***, please use **releases of Ubuntu**. Also ***other Ubuntu images*** not found on ***releases of Ubuntu***, such as builds for less popular architectures and other non-standard and unsupported images and daily build images, can downloaded from [**the cdimage server**][the cdimage server]. For old releases, see [**old-releases of Ubuntu**][old-releases of Ubuntu].
+**Ubuntu ISO images** can be downloaded from [releases of Ubuntu][releases of Ubuntu]. For ***popular architectures***, please use ***releases of Ubuntu***. Also ***other Ubuntu images*** not found on releases of Ubuntu, such as builds for less popular architectures and other non-standard and unsupported images and daily build images, can downloaded from [the cdimage server][the cdimage server]. For old releases, see [old-releases of Ubuntu][old-releases of Ubuntu].
 
-As of the Ubuntu LTS release in 2020, **the server documentation** has moved to [**Ubuntu Server Guide**][Ubuntu Server Guide]. However; the detailed **ubuntu latest LTS *installation guide*** can be found [**here**][Ubuntu Installation Guide].
+As of the Ubuntu LTS release in 2020, **the server documentation** has moved to [Ubuntu Server Guide][Ubuntu Server Guide]. However; the detailed **ubuntu latest LTS *installation guide*** can be found [here][Ubuntu Installation Guide].
 
-Fully automated installations are possible on Ubuntu using [**Ubuntu Installer(debian-installer)**][Ubuntu Installer(debian-installer)] or [**Ubuntu Live Server Installer(autoinstall)**][Ubuntu Live Server Installer(autoinstall)].
+Fully automated installations are possible on Ubuntu using [Ubuntu Installer(debian-installer)][Ubuntu Installer(debian-installer)] or [Ubuntu Live Server Installer(autoinstall)][Ubuntu Live Server Installer(autoinstall)].
 
-- The Ubuntu Installer (based on the Debian Installer, and so often called simply **debian-installer** or just **d-i)** consists of a number of special-purpose components to perform each installation task. The **debian-installer(*d-i)*)** supports automating installs via **preconfiguration(*preseed.cfg*) files**. **Preseeding method** provides a way to set answers to questions asked during the installation process, without having to manually enter the answers while the installation is running. For more information visit [**Automating the Installation using Preseeding**][Automating the Installation using Preseeding], [**Example Preseed File**][Example Preseed File] and [**Packer Preseed Ubuntu**][Packer Preseed Ubuntu].
-- However, Ubuntu [**announced**][Server installer plans for 20.04 LTS] that it will complete the transition to **the Live Server Installer**(*autoinstall)* with 20.04 LTS. It lets you answer all those configuration questions ahead of time with an ***autoinstall config*** and lets the installation process run without any interaction. The *autoinstall config* is provided via [**cloud-init configuration**][Cloud-Init-Config Documentation], which is almost endlessly flexible. [The live server installer is now the preferred media to install](https://wiki.ubuntu.com/FocalFossa/ReleaseNotes#Installer) Ubuntu Server on all architectures. For more information visit [***Ubuntu Autoinstall Quick Start***][Ubuntu Autoinstall Quick Start] and [***Automated Server Installs Config File Reference***][Automated Server Installs Config File Reference]
+- The Ubuntu Installer (based on the Debian Installer, and so often called simply **debian-installer** or just **d-i)** consists of a number of special-purpose components to perform each installation task. The debian-installer(*d-i)*) supports automating installs via **preconfiguration(*preseed.cfg*) files**. Preseeding method provides a way to set answers to questions asked during the installation process, without having to manually enter the answers while the installation is running. For more information visit [Automating the Installation using Preseeding][Automating the Installation using Preseeding], [Example Preseed File][Example Preseed File] and [Packer Preseed Ubuntu][Packer Preseed Ubuntu].
+- However, Ubuntu [announced][Server installer plans for 20.04 LTS] that it will complete the transition to **the Live Server Installer**(*autoinstall)* with 20.04 LTS. It lets you answer all those configuration questions ahead of time with an ***autoinstall config*** and lets the installation process run without any interaction. The *autoinstall config* is provided via [cloud-init configuration][Cloud-Init-Config Documentation], which is almost endlessly flexible. [The live server installer is now the preferred media to install](https://wiki.ubuntu.com/FocalFossa/ReleaseNotes#Installer) Ubuntu Server on all architectures. For more information visit [Ubuntu Autoinstall Quick Start][Ubuntu Autoinstall Quick Start] and [Automated Server Installs Config File Reference][Automated Server Installs Config File Reference]
 
-Ubuntu also offers ***Cloud Images***. [**Ubuntu Cloud Images**][Ubuntu Cloud Images] are the *official Ubuntu images* and are *pre-installed disk images* that have been customized by ***Ubuntu engineering to run on public clouds that provide Ubuntu Certified Images, Openstack, LXD, and more***. It will be used in `create-template-via-cloudinit.sh` due to the **fast** and **easy** setup.
+Ubuntu also offers ***Cloud Images***. [Ubuntu Cloud Images][Ubuntu Cloud Images] are the *official Ubuntu images* and are *pre-installed disk images* that have been customized by ***Ubuntu engineering to run on public clouds that provide Ubuntu Certified Images, Openstack, LXD, and more***. It will be used in `create-template-via-cloudinit.sh` due to the **fast** and **easy** setup.
 
 <details>
 <summary><strong>To create Ubutu Images via ISO without using Cloud-Images, the following repositories and articles can be viewed</strong></summary>
@@ -166,7 +168,7 @@ Packer is an **automatic machine image generation** tool and ***Proxmox-VE templ
 
 ### Preparing Proxmox-VE template via Packer
 
-[**Packer Proxmox Builder**][Packer Proxmox Builder] will be used to create the *Proxmox-VE template*. It provision and configure the VM and then converts it into a template. *Packer Proxmox Builder* perfoms operations via the [**Proxmox Web API**][Proxmox Web API].
+[Packer Proxmox Builder][Packer Proxmox Builder] will be used to create the *Proxmox-VE template*. It provision and configure the VM and then converts it into a template. *Packer Proxmox Builder* perfoms operations via the [Proxmox Web API][Proxmox Web API].
 
 Packer Proxmox Builder is able to create new images using both **ISO([proxmox-iso][proxmox-iso])** and existing **Cloud-Init Images([proxmox-clone][proxmox-clone])**. Creating a new image using **Packer([proxmox-iso][proxmox-iso])** will be developed later.
 
@@ -203,7 +205,7 @@ In Packer, ***Assigning Values* to the build Variables** with *HCL2* can be done
 
 ***Local Variables***
 
-An `input-variable` cannot be used in **another input variable**, so [**locals**][The locals block] could be used instead. The `locals` **block**, also called the `local-variable` **block**, defines locals within your Packer configuration. [Local Values][Local Values] assign a name to an expression, that can then be used multiple times within a folder.
+An `input-variable` cannot be used in **another input variable**, so [locals][The locals block] could be used instead. The `locals` **block**, also called the `local-variable` **block**, defines locals within your Packer configuration. [Local Values][Local Values] assign a name to an expression, that can then be used multiple times within a folder.
 
 ```sh
 # locals.pkr.hcl
@@ -220,9 +222,9 @@ locals {
 
 - [Packer Proxmox Builder][Packer Proxmox Builder]
 - [proxmox-clone][proxmox-clone] **&** [proxmox-iso][proxmox-iso]
-- [**Input Variables** and `local` variables][Input Variables and local variables]
+- [Input Variables and `local` variables][Input Variables and local variables]
   - [The `variable` block][The variable block]
-  - [**Input Variables**][Input Variables]
+  - [Input Variables][Input Variables]
   - [The `locals` block][The locals block]
   - [Local Values][Local Values]
 - [Creating Proxmox Templates with Packer - Aaron Berry][Aaron Berry Packer Article]
