@@ -15,7 +15,8 @@
 - [Packer](#packer)
   - [Installing Packer on Ubuntu Jump Server](#installing-packer-on-ubuntu-jump-server)
   - [Preparing Proxmox-VE template via Packer](#preparing-proxmox-ve-template-via-packer)
-    - [Packer **Input** Variables and `local` Variables](#packer-input-variables-and-local-variables)
+    - [Input Variables](#input-variables)
+    - [`local` Variables](#local-variables)
 
 ## Proxmox-VE
 
@@ -74,12 +75,11 @@ Fully automated installations are possible on Ubuntu using [Ubuntu Installer(deb
 - The Ubuntu Installer (based on the Debian Installer, and so often called simply **debian-installer** or just **d-i)** consists of a number of special-purpose components to perform each installation task. The debian-installer(*d-i)*) supports automating installs via **preconfiguration(*preseed.cfg*) files**. Preseeding method provides a way to set answers to questions asked during the installation process, without having to manually enter the answers while the installation is running. For more information visit [Automating the Installation using Preseeding][Automating the Installation using Preseeding], [Example Preseed File][Example Preseed File] and [Packer Preseed Ubuntu][Packer Preseed Ubuntu].
 - However, Ubuntu [announced][Server installer plans for 20.04 LTS] that it will complete the transition to **the Live Server Installer**(*autoinstall)* with 20.04 LTS. It lets you answer all those configuration questions ahead of time with an ***autoinstall config*** and lets the installation process run without any interaction. The *autoinstall config* is provided via [cloud-init configuration][Cloud-Init-Config Documentation], which is almost endlessly flexible. [The live server installer is now the preferred media to install](https://wiki.ubuntu.com/FocalFossa/ReleaseNotes#Installer) Ubuntu Server on all architectures. For more information visit [Ubuntu Autoinstall Quick Start][Ubuntu Autoinstall Quick Start] and [Automated Server Installs Config File Reference][Automated Server Installs Config File Reference]
 
-Ubuntu also offers ***Cloud Images***. [Ubuntu Cloud Images][Ubuntu Cloud Images] are the *official Ubuntu images* and are *pre-installed disk images* that have been customized by ***Ubuntu engineering to run on public clouds that provide Ubuntu Certified Images, Openstack, LXD, and more***. It will be used in `create-template-via-cloudinit.sh` due to the **fast** and **easy** setup.
+Ubuntu also offers ***Cloud Images***. [Ubuntu Cloud Images][Ubuntu Cloud Images] are the *official Ubuntu images* and are *pre-installed disk images* that have been customized by ***Ubuntu engineering to run on public clouds that provide Ubuntu Certified Images, Openstack, LXD, and more***. It will be used in [`create-template-via-cloudinit.sh`](#installation---script-step---creating-cloud-init-template) due to the **fast** and **easy** setup.
 
 <details>
-<summary><strong>To create Ubutu Images via ISO without using Cloud-Images, the following repositories and articles can be viewed</strong></summary>
+<summary><strong>To create Ubuntu Images via ISO without using Cloud-Images, the following repositories and articles can be viewed</strong></summary>
 
-- [Automated image builds with Jenkins, Packer, and Kubernetes][Automated image builds with Jenkins, Packer, and Kubernetes]
 - [Automating Ubuntu 20.04 installs with Packer][Automating Ubuntu 20.04 installs with Packer]
 - [Automating Ubuntu Server 20.04 with Packer][Automating Ubuntu Server 20.04 with Packer]
 - [Packer build - Ubuntu Images(autoinstall & cloud-config)][Packer build - Ubuntu Images(autoinstall & cloud-config)]
@@ -90,6 +90,7 @@ Ubuntu also offers ***Cloud Images***. [Ubuntu Cloud Images][Ubuntu Cloud Images
 - [Packer Proxmox Ubuntu Templates(preseed)][Packer Proxmox Ubuntu Templates(preseed)]
 - [Packer Ubuntu Templates(preseed)][Packer Ubuntu Templates(preseed)]
 - [Packer Templates for Ubuntu(preseed)][Packer Templates for Ubuntu(preseed)]
+- [Automated image builds with Jenkins, Packer, and Kubernetes][Automated image builds with Jenkins, Packer, and Kubernetes]
 
 </details>
 
@@ -122,14 +123,14 @@ Ubuntu also offers ***Cloud Images***. [Ubuntu Cloud Images][Ubuntu Cloud Images
 
 After installation to create cloud-init template(s) `create-template-via-cloudinit.sh` should be executed on Proxmox-VE Server(s). The script is based on the [create-cloud-template.sh][chriswayg-gist] developed by [chriswayg][chriswayg].
 
-|  No | `create-template-via-cloudinit.sh` Execution Prerequisites |
+|     | `create-template-via-cloudinit.sh` Execution Prerequisites |
 | :-: | :--------------------------------------------------------- |
 |  1  |`create-template-via-cloudinit.sh` **should be executed on a Proxmox VE 6.x Server.** |
 |  2  |A DHCP Server should be active on `vmbr0`. |
 |  3  | **Download Latest Version of the Script on Proxmox VE Server:**<br> `curl https://raw.githubusercontent.com/BarisGece/mHC/main/proxmox-ve/create-template-via-cloudinit.sh > /usr/local/bin/create-template-via-cloudinit.sh && chmod -v +x /usr/local/bin/create-template-via-cloudinit.sh` |
 |  4  | **-- Caution! MUST BE DONE to USE cloud-init-config.yml --**<br> The cloud-init files need to be stored in a **snippet**. There is not detail information very well documented in [Proxmox-VE qm cloud_init][Proxomox-VE qm cloud_init] but [Alex Williams][AW Gist] kept us well informed. <ol><li>Go to `Storage View -> Storage -> Add -> Directory`</li><li>Give it an ID such as `snippets`, and specify any path on your host such as `/snippets`</li><li>Under `Content` choose `Snippets` and de-select `Disk image` (optional)</li><li>Upload (scp/rsync/whatever) your `user-data, meta-data, network-config` files to your _proxmox_ server in `/snippets/snippets/` (the directory should be there if you followed steps 1-3)</li></ol> Finally, you just need to `qm set` with `--cicustom`, like this:(If `cloud-init-config.yml` is present, the following command will run automatically in `create-template-via-cloudinit.sh`)<br> `qm set 100 --cicustom "user=snippets:snippets/user-data,network=snippets:snippets/network-config,meta=snippets:snippets/meta-data"` |
-|  4  | (optionally) Prepare a cloudinit **user-cloud-init-config.yml** in the working directory. For more information [Cloud-Init-Config Sample][Cloud-Init-Config Sample].<br> [sample-cloud-init-config.yml][sample-cloud-init-config.yml] can be used as a sample. |
-|  6  | To the migration to be completed successfully, the Proxmox Storage Configuration should be set as follows.<br> **local**(*Type - Directory*):<ul><li>***Content:*** **VZDump backup file, Disk image, ISO image, Container template**</li><li>***Path/Target:*** **/var/lib/vz**</li><li>***Shared:*** **Yes**</li></ul> **local-lvm**(*Type - LVM-Thin*):<ul><li>***Content:*** **Disk image, Container**</li><li>***Nodes:*** **Select ALL Nodes by one by**</li></ul> *All of them should be **ENABLED***<br> ![DC_Storage_Settings](./img/DC_Storage_Settings.png)  |
+|  5  | Prepare a cloudinit **user-cloud-init-config.yml** in the working directory. [sample-cloud-init-config.yml][sample-cloud-init-config.yml] can be used as a sample.<br> For more information [Cloud-Init-Config Sample][Cloud-Init-Config Sample]. |
+|  6  | To the migration to be completed successfully, the Proxmox Storage Configuration should be set as follows.<br> **local**(*Type - Directory*):<ul><li>***Content:*** **VZDump backup file, Disk image, ISO image, Container template**</li><li>***Path/Target:*** **/var/lib/vz**</li><li>***Shared:*** **Yes**</li></ul> **local-lvm**(*Type - LVM-Thin*):<ul><li>***Content:*** **Disk image, Container**</li><li>***Nodes:*** **Select ALL Nodes by one by**</li></ul> **snippets**(*Type - Directory*):<ul><li>***Content:*** **Snippets**</li><li>***Path/Target:*** **/snippets**</li><li>***Nodes:*** **Select ALL Nodes by one by**</li></ul> *All of them should be **ENABLED***<br> ![DC_Storage_Settings](./img/DC_Storage_Settings.png)  |
 |  7  | Run the Script:<br> `$ create-template-via-cloudinit.sh` |
 |  8  | Clone the Finished Template from the Proxmox GUI and Test. |
 
@@ -170,16 +171,16 @@ Packer is an **automatic machine image generation** tool and ***Proxmox-VE templ
 
 [Packer Proxmox Builder][Packer Proxmox Builder] will be used to create the *Proxmox-VE template*. It provision and configure the VM and then converts it into a template. *Packer Proxmox Builder* perfoms operations via the [Proxmox Web API][Proxmox Web API].
 
-Packer Proxmox Builder is able to create new images using both **ISO([proxmox-iso][proxmox-iso])** and existing **Cloud-Init Images([proxmox-clone][proxmox-clone])**. Creating a new image using **Packer([proxmox-iso][proxmox-iso])** will be developed later.
+Packer Proxmox Builder is able to create new images using both **ISO**([proxmox-iso][proxmox-iso]) and existing **Cloud-Init Images**([proxmox-clone][proxmox-clone]). Creating a new image using ([proxmox-iso][proxmox-iso]) will be developed later.
 
-Now, **Proxmox-VE templates** will be created with **Packer([proxmox-clone][proxmox-clone])** using **existing Cloud-Init Images** created via `create-template-via-cloudinit.sh`.
+Now, **Proxmox-VE templates** will be created with **proxmox-clone** using **existing Cloud-Init Images** created via `create-template-via-cloudinit.sh`.
 
-|  No | Packer Execution Prerequisites |
+|     | Packer Execution Prerequisites |
 | :-: | :----------------------------- |
 |  1  |To skip validating the certificate set `insecure_skip_tls_verify = true` in **sources.pkr.hcl** |
 |  2  |To Packer run sucessfully `qemu-guest-agent` must be installed on VMs & `qemu_agent = ...` configuration option should be `true` in `sources.pkr.hcl`<br> For more detail [Error getting SSH address 500 QEMU guest agent is not running][QEMU Agent Error-Github]|
 
-#### Packer **Input** Variables and `local` Variables
+#### Input Variables
 
 In Packer, ***Assigning Values* to the build Variables** with *HCL2* can be done in **3** different ways as follows  
 
@@ -203,7 +204,7 @@ In Packer, ***Assigning Values* to the build Variables** with *HCL2* can be done
   - The `variable` block, also called the `input-variable` block, defines variables within your *Packer* configuration.
   - **Debug** => `PACKER_LOG=1 packer build -debug -on-error=ask .`<br> **Release** => `PACKER_LOG=1 packer build .`
 
-***Local Variables***
+#### `local` Variables
 
 An `input-variable` cannot be used in **another input variable**, so [locals][The locals block] could be used instead. The `locals` **block**, also called the `local-variable` **block**, defines locals within your Packer configuration. [Local Values][Local Values] assign a name to an expression, that can then be used multiple times within a folder.
 
@@ -255,7 +256,6 @@ locals {
 [Automated Server Installs Config File Reference]:               https://ubuntu.com/server/docs/install/autoinstall-reference
 [Ubuntu Cloud Images]:                                           https://cloud-images.ubuntu.com/
 [Ubuntu Enterprise Cloud - Images]:                              https://help.ubuntu.com/community/UEC/Images
-[Automated image builds with Jenkins, Packer, and Kubernetes]:   https://cloud.google.com/solutions/automated-build-images-with-jenkins-kubernetes
 [Automating Ubuntu 20.04 installs with Packer]:                  https://nickcharlton.net/posts/automating-ubuntu-2004-installs-with-packer.html
 [Automating Ubuntu Server 20.04 with Packer]:                    https://beryju.org/blog/automating-ubuntu-server-20-04-with-packer
 [Packer build - Ubuntu Images(autoinstall & cloud-config)]:      https://github.com/tylert/packer-build
@@ -266,12 +266,13 @@ locals {
 [Packer Proxmox Ubuntu Templates(preseed)]:                      https://github.com/Aaron-K-T-Berry/packer-ubuntu-proxmox-template
 [Packer Ubuntu Templates(preseed)]:                              https://github.com/chef/bento/tree/master/packer_templates/ubuntu
 [Packer Templates for Ubuntu(preseed)]:                          https://github.com/boxcutter/ubuntu
+[Automated image builds with Jenkins, Packer, and Kubernetes]:   https://cloud.google.com/solutions/automated-build-images-with-jenkins-kubernetes
 [chriswayg]:                                                     https://github.com/chriswayg
 [chriswayg-gist]:                                                https://gist.github.com/chriswayg/43fbea910e024cbe608d7dcb12cb8466
 [Proxomox-VE qm cloud_init]:                                     https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_cloud_init
 [AW Gist]:                                                       https://gist.github.com/aw/ce460c2100163c38734a83e09ac0439a
-[Cloud-Init-Config Sample]:                                      https://cloudinit.readthedocs.io/en/latest/topics/examples.html#yaml-examples
 [sample-cloud-init-config.yml]:                                  https://raw.githubusercontent.com/BarisGece/mHC/main/proxmox-ve/sample-cloud-init-config.yml
+[Cloud-Init-Config Sample]:                                      https://cloudinit.readthedocs.io/en/latest/topics/examples.html#yaml-examples
 [Admin Guide - PDF]:                                             https://proxmox.com/en/downloads/item/proxmox-ve-admin-guide-for-6-x
 [Admin Guide - HTML]:                                            https://pve.proxmox.com/pve-docs/pve-admin-guide.html
 [Wiki Page]:                                                     https://pve.proxmox.com/wiki/Main_Page
@@ -286,11 +287,11 @@ locals {
 [Proxmox Web API]:                                               https://pve.proxmox.com/wiki/Proxmox_VE_API
 [proxmox-clone]:                                                 https://www.packer.io/docs/builders/proxmox/clone
 [proxmox-iso]:                                                   https://www.packer.io/docs/builders/proxmox/iso
+[QEMU Agent Error-Github ]:                                      https://github.com/hashicorp/packer/issues/9539#issuecomment-728378170
+[The locals block]:                                              https://www.packer.io/docs/from-1.5/blocks/locals
+[Local Values]:                                                  https://www.packer.io/docs/from-1.5/locals
 [Input Variables and local variables]:                           https://www.packer.io/guides/hcl/variables
 [The variable block]:                                            https://www.packer.io/docs/from-1.5/blocks/variable
 [Input Variables]:                                               https://www.packer.io/docs/from-1.5/variables
-[The locals block]:                                              https://www.packer.io/docs/from-1.5/blocks/locals
-[Local Values]:                                                  https://www.packer.io/docs/from-1.5/locals
-[QEMU Agent Error-Github ]:                                      https://github.com/hashicorp/packer/issues/9539#issuecomment-728378170
 [Aaron Berry Packer Article]:                                    https://dev.to/aaronktberry/creating-proxmox-templates-with-packer-1b35
 [Aaron Berry Article Repo]:                                      https://github.com/Aaron-K-T-Berry/packer-ubuntu-proxmox-template
