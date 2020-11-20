@@ -2,7 +2,7 @@
   <img src="./img/mHC.png" alt="mini Home Cloud" width="253">
 </div>
 
-<p align="center">The easy-way to create and manage a personal cloud envirnoment. mHC has been created using <strong>Shell</strong>, <a href="#Proxmox-VE"><strong>Proxmox-VE</strong></a>, <strong><a href="#Packer">Packer</a></strong>, <strong>Terraform</strong>, <strong>Ansible</strong> and is not completely reliable for <em><strong>Production</strong></em> environments.</p>
+<p align="center">The easy-way to create and manage a personal cloud envirnoment. mHC has been created using <strong>Shell</strong>, <a href="#Proxmox-VE"><strong>Proxmox-VE</strong></a>, <a href="#Packer"><strong>Packer</strong></a>, <a href="#Terraform"><strong>Terraform</strong></a>, <strong>Ansible</strong>, <a href="#MAAS"><strong>MAAS</strong></a> and is not completely reliable for <em><strong>Production</strong></em> environments.</p>
 
 # <!-- omit in toc -->
 
@@ -17,6 +17,8 @@
   - [Preparing Proxmox-VE template via Packer](#preparing-proxmox-ve-template-via-packer)
     - [Input Variables](#input-variables)
     - [`local` Variables](#local-variables)
+- [Terraform](#terraform)
+- [MAAS](#maas)
 
 ## Proxmox-VE
 
@@ -236,6 +238,16 @@ locals {
 
 ---
 
+## Terraform
+
+[Terraform][Terraform] is an **Infrastructure as Code** tool to securely and efficiently provision, manage, and version infrastructure. Having more than **1000** [Modules][Terraform Modules] and more than **200** [Providers][Terraform Providers] makes it easy to manage existing and popular infrastructure, cloud or service providers as well as *custom on-premises solutions*.
+
+---
+
+## MAAS
+
+[MAAS][MAAS] is a **Metal as a Service** that allows you to treat physical servers in the Cloud like VM Instances. It turns bare metal into a flexible cloud-like resource, so there is no need to manage servers individually.. For more information [MAAS Docs][MAAS Docs] **&** [Proxmox - MAAS - JuJu by VectOps][Proxmox - MAAS - JuJu by VectOps]
+
 [Proxmox-VE]:                                                    https://www.proxmox.com/
 [PVE-ISO]:                                                       https://www.proxmox.com/en/downloads/category/iso-images-pve
 [Etcher]:                                                        https://www.balena.io/etcher/
@@ -297,3 +309,11 @@ locals {
 [Input Variables]:                                               https://www.packer.io/docs/from-1.5/variables
 [Aaron Berry Packer Article]:                                    https://dev.to/aaronktberry/creating-proxmox-templates-with-packer-1b35
 [Aaron Berry Article Repo]:                                      https://github.com/Aaron-K-T-Berry/packer-ubuntu-proxmox-template
+[Terraform]:                                                     https://www.terraform.io/
+[Terraform Modules]:                                             https://registry.terraform.io/
+[Terraform Providers]:                                           https://www.terraform.io/docs/providers/
+[Terraform Introduction]:                                        https://www.terraform.io/intro/index.html
+[Terraform Documentation]:                                       https://www.terraform.io/docs/index.html
+[MAAS]:                                                          https://maas.io/
+[MAAS Docs]:                                                     https://maas.io/docs
+[Proxmox - MAAS - JuJu by VectOps]:                              https://vectops.com/2020/02/production-ready-kubernetes-paas-in-10-steps-iaas-included/
