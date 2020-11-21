@@ -13,6 +13,7 @@
   - [Creating Ubuntu Image](#creating-ubuntu-image)
   - [Installation - Script Step - Creating cloud-init Template](#installation---script-step---creating-cloud-init-template)
   - [For Maximum Performance](#for-maximum-performance)
+  - [Create PVE User for Terraform, Packer & Ansible](#create-pve-user-for-terraform-packer--ansible)
 - [Packer](#packer)
   - [Installing Packer on Ubuntu Jump Server](#installing-packer-on-ubuntu-jump-server)
   - [Preparing Proxmox-VE template via Packer](#preparing-proxmox-ve-template-via-packer)
@@ -129,7 +130,7 @@ After installation to create cloud-init template(s) `create-template-via-cloudin
 
 |     | `create-template-via-cloudinit.sh` Execution Prerequisites |
 | :-: | :--------------------------------------------------------- |
-|  1  |`create-template-via-cloudinit.sh` **should be executed on a Proxmox VE 6.x Server.** |
+|  1  |`create-template-via-cloudinit.sh` **must be executed on a Proxmox VE 6.x Server.** |
 |  2  |A DHCP Server should be active on `vmbr0`. |
 |  3  | **Download Latest Version of the Script on Proxmox VE Server:**<br> `curl https://raw.githubusercontent.com/BarisGece/mHC/main/proxmox-ve/create-template-via-cloudinit.sh > /usr/local/bin/create-template-via-cloudinit.sh && chmod -v +x /usr/local/bin/create-template-via-cloudinit.sh` |
 |  4  | **-- Caution! MUST BE DONE to USE cloud-init-config.yml --**<br> The cloud-init files need to be stored in a **snippet**. There is not detail information very well documented in [Proxmox-VE qm cloud_init][Proxomox-VE qm cloud_init] but [Alex Williams][AW Gist] kept us well informed. <ol><li>Go to `Storage View -> Storage -> Add -> Directory`</li><li>Give it an ID such as `snippets`, and specify any path on your host such as `/snippets`</li><li>Under `Content` choose `Snippets` and de-select `Disk image` (optional)</li><li>Upload (scp/rsync/whatever) your `user-data, meta-data, network-config` files to your _proxmox_ server in `/snippets/snippets/` (the directory should be there if you followed steps 1-3)</li></ol> Finally, you just need to `qm set` with `--cicustom`, like this:(If `cloud-init-config.yml` is present, the following command will run automatically in `create-template-via-cloudinit.sh`)<br> `qm set 100 --cicustom "user=snippets:snippets/user-data,network=snippets:snippets/network-config,meta=snippets:snippets/meta-data"` |
@@ -188,6 +189,16 @@ After installation to create cloud-init template(s) `create-template-via-cloudin
 
 ---
 
+### Create PVE User for Terraform, Packer & Ansible
+
+`create-proxmox-users.sh` will create Proxmox users for *Packer*, *Terraform* and *Ansible*. The password information of the users to be created will be read from *Environment Variables*. Before running the script, define the variables with the following *Environment Variable Names*. For more information [pveum User Management][pveum User Management]
+
+- `$PACKER_PVE_USER`, `$PACKER_PVE_PASSWORD` - `$TERRAFORM_PVE_USER`, `$TERRAFORM_PVE_PASSWORD` - `$ANSIBLE_PVE_USER`, `$ANSIBLE_PVE_PASSWORD`
+- `create-proxmox-users.sh` **must be executed *once* on a Proxmox VE 6.x Server.**
+- `curl https://raw.githubusercontent.com/BarisGece/mHC/main/proxmox-ve/create-proxmox-users.sh > /usr/local/bin/create-proxmox-users.sh && chmod -v +x /usr/local/bin/create-proxmox-users.sh`
+
+---
+
 <details>
 <summary><strong>Proxmox-VE Documents</strong></summary>
 
@@ -206,6 +217,7 @@ After installation to create cloud-init template(s) `create-template-via-cloudin
 - [Virtio Balloon][Virtio Balloon]
 - [NUMA][NUMA]
 - [Hotplug][Hotplug]
+- [pveum User Management][pveum User Management]
 - [Ansible role to configure Proxmox server][Ansible role to configure Proxmox server]
 
 </details>
@@ -355,6 +367,7 @@ locals {
 [Virtio Balloon]:                                                https://rwmj.wordpress.com/2010/07/17/virtio-balloon/
 [NUMA]:                                                          https://pve.proxmox.com/wiki/NUMA
 [Hotplug]:                                                       https://pve.proxmox.com/wiki/Hotplug_(qemu_disk,nic,cpu,memory)
+[pveum User Management]:                                         https://pve.proxmox.com/pve-docs/chapter-pveum.html
 [Ansible role to configure Proxmox server]:                      https://github.com/chriswayg/ansible-proxmox
 [Packer Proxmox Builder]:                                        https://www.packer.io/docs/builders/proxmox.html
 [Proxmox Web API]:                                               https://pve.proxmox.com/wiki/Proxmox_VE_API
