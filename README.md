@@ -162,7 +162,11 @@ After installation to create cloud-init template(s) `create-template-via-cloudin
     - A kernel newer than **4.7** is recommended for Linux Guests for all hotplugging features to work.
     - The following **kernel modules should bu installed** on **Linux Guests**. To automatically load the modules during boot, add them into **`/etc/modules`**. The automate command was added to `sample-cloud-init-config.yml`<br>Caution! Lines beginning with "#" are ignored.
       - `# modprobe acpiphp` <br> `# modprobe pci_hotplug`
-    - kernel modules to load at boot time.
+    - After kernel **4.7**, ***only*** the following kernel parameter should be added to `/etc/default/grub` ***during boot*** for the **CPU**. It also added to `sample-cloud-init-config.yml`.
+      - `GRUB_CMDLINE_LINUX_DEFAULT="quiet splash memhp_default_state=online"`
+    - Update the **grub boot loader**
+      - `sudo update-grub`
+    - **REBOOT Linux Guest**
     - Sample command for **hotplugging vCPUs**
       - `qm set 9000 -vcpus 4`
 
