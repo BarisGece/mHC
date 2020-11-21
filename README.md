@@ -169,14 +169,13 @@ After installation to create cloud-init template(s) `create-template-via-cloudin
     - **REBOOT Linux Guest**
     - Sample command for **hotplugging vCPUs**
       - `qm set 9000 -vcpus 4`
-
-| Device | Kernel | Hotplug       | Unplug        | OS                         |
-| :----: | :----: | :-----------: | :-----------: | :------------------------: |
-| Disk   | All    | Linux/Windows | Linux/Windows | Linux/Windows              |
-| NIC    | All    | Linux/Windows | Linux/Windows | Linux/Windows              |
-| USB    | All    | Linux/Windows | Linux/Windows | Linux/Windows              |
-| CPU    | 3.10+  | Linux/Windows | Linux(4.10+)  | Linux/Windows Server 2008+ |
-| Memory | 3.10+  | Linux/Windows | Linux(4.10+)  | Linux/Windows Server 2008+ |
+    - | Device | Kernel | Hotplug       | Unplug        | OS                         |
+      | :----: | :----: | :-----------: | :-----------: | :------------------------: |
+      | Disk   | All    | Linux/Windows | Linux/Windows | Linux/Windows              |
+      | NIC    | All    | Linux/Windows | Linux/Windows | Linux/Windows              |
+      | USB    | All    | Linux/Windows | Linux/Windows | Linux/Windows              |
+      | CPU    | 3.10+  | Linux/Windows | Linux(4.10+)  | Linux/Windows Server 2008+ |
+      | Memory | 3.10+  | Linux/Windows | Linux(4.10+)  | Linux/Windows Server 2008+ |
 
 ---
 
