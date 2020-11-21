@@ -8,17 +8,9 @@
 
 ## Table of Contents<!-- omit in toc -->
 
-- [Proxmox-VE](#proxmox-ve)
-  - [Installation - Manual Step](#installation---manual-step)
-  - [Creating Ubuntu Image](#creating-ubuntu-image)
-  - [Installation - Script Step - Creating cloud-init Template](#installation---script-step---creating-cloud-init-template)
-- [Packer](#packer)
-  - [Installing Packer on Ubuntu Jump Server](#installing-packer-on-ubuntu-jump-server)
-  - [Preparing Proxmox-VE template via Packer](#preparing-proxmox-ve-template-via-packer)
-    - [Input Variables](#input-variables)
-    - [`local` Variables](#local-variables)
-- [Terraform](#terraform)
-- [MAAS](#maas)
+- [modprobe pci_hotplug](#modprobe-pci_hotplug)
+  - [Terraform](#terraform)
+  - [MAAS](#maas)
 
 ## Proxmox-VE
 
@@ -137,6 +129,53 @@ After installation to create cloud-init template(s) `create-template-via-cloudin
 |  7  | Run the Script:<br> `$ create-template-via-cloudinit.sh` |
 |  8  | Clone the Finished Template from the Proxmox GUI and Test. |
 
+---
+
+### For Maximum Performance
+
+- **Network Device**
+  - The **VirtIO paravirtualized NIC** should be used if you aim for **maximum performance**. Like all VirtIO devices, the guest OS should have the proper driver installed.
+  - The **VirtIO model** provides the ***best performance*** with very **low CPU overhead**. If your guest does not support this driver, it is usually best to **use e1000**.
+  - `qm create 9000 --memory 2048 --net0 virtio,bridge=vmbr0`
+- **Hard Disk -- Bus/Controller -- Cache**
+  - If you aim at **maximum performance**, you can select a **SCSI** controller of type **VirtIO SCSI single** which will allow you to select the IO Thread option.
+  - **cache=none** seems to be the best performance and is the default since Proxmox 2.X. However, **cache=unsafe** doesn't flush data, so it's ***fastest*** but ***unsafest***. The information is based on using **raw volumes**, other volume formats may behave differently. For more information [Performance Tweaks][Performance Tweaks].
+  - Use **raw disk** image instead of **qcow2** if possible
+  - `qm importdisk 9000 /tmp/VMIMAGE local-lvm --format raw`
+  - `qm set 9000 --scsihw virtio-scsi-single --scsi0 local-lvm:vm-9000-disk-0,iothread=1`
+- **CPU Types**
+  - If you have a ***homogeneous cluster where all nodes have the same CPU***, set the **CPU type** to **host**, as in theory this will give your guests maximum performance.
+  - `qm set 9000 --cpu host`
+- **NUMA(*non-uniform memory access*)**
+  - With NUMA, **memory** can be evenly *distributed among CPUs*, which improves performance. Also, to enable **CPU** and **Memory** *hot-plugging* in Proxmox-VE, *NUMA* option should be *enabled*. To enable NUMA option on VM execute the following **command**.
+    - `qm set --kvm 1 numa 1`
+  - If the following **command** returns ***more than one node***, then your host system has a **NUMA** architecture.
+    - `numactl --hardware | grep available`
+    - `numactl --hardware`
+  - This command will show all the nodes in the cluster that are NUMA aware and their performance stats.
+    - `numastat`
+- **HOT-PLUGGING**
+  - The **hotplugging** feature provides the ability to **add** or **remove** devices or resources from the Virtual Machine ***without rebooting***. To enable **hotplug** execute the following **command**.
+    - qm set --hotplug disk,network,usb,memory,cpu
+  - **NUMA** option **MUST be ENABLED**.
+  - ***Preparing Linux Guests***
+    - A kernel newer than **4.7** is recommended for Linux Guests for all hotplugging features to work.
+    - The following **kernel modules should bu installed** on **Linux Guests**. To automatically load the modules during boot, add them into **`/etc/modules`**. The automate command was added to `sample-cloud-init-config.yml`<br>Caution! Lines beginning with "#" are ignored.
+      - `# modprobe acpiphp` <br> `# modprobe pci_hotplug`
+    - kernel modules to load at boot time.
+    - Sample command for **hotplugging vCPUs**
+      - `qm set 9000 -vcpus 4`
+
+| Device | Kernel | Hotplug       | Unplug        | OS                         |
+| :----: | :----: | :-----------: | :-----------: | :------------------------: |
+| Disk   | All    | Linux/Windows | Linux/Windows | Linux/Windows              |
+| NIC    | All    | Linux/Windows | Linux/Windows | Linux/Windows              |
+| USB    | All    | Linux/Windows | Linux/Windows | Linux/Windows              |
+| CPU    | 3.10+  | Linux/Windows | Linux(4.10+)  | Linux/Windows Server 2008+ |
+| Memory | 3.10+  | Linux/Windows | Linux(4.10+)  | Linux/Windows Server 2008+ |
+
+---
+
 <details>
 <summary><strong>Proxmox-VE Documents</strong></summary>
 
@@ -151,6 +190,10 @@ After installation to create cloud-init template(s) `create-template-via-cloudin
 - [Proxmox(qm) Cloud-Init Support FAQ-Wiki][Proxmox(qm) Cloud-Init Support FAQ-Wiki]
 - [Cloud-Init-Config Sample][Cloud-Init-Config Sample]
 - [Cloud-Init-Config Documentation][Cloud-Init-Config Documentation]
+- [Performance Tweaks][Performance Tweaks]
+- [Virtio Balloon][Virtio Balloon]
+- [NUMA][NUMA]
+- [Hotplug][Hotplug]
 - [Ansible role to configure Proxmox server][Ansible role to configure Proxmox server]
 
 </details>
@@ -246,7 +289,7 @@ locals {
 
 ## MAAS
 
-[MAAS][MAAS] is a **Metal as a Service** that allows you to treat physical servers in the Cloud like VM Instances. It turns bare metal into a flexible cloud-like resource, so there is no need to manage servers individually.. For more information [MAAS Docs][MAAS Docs] **&** [Proxmox - MAAS - JuJu by VectOps][Proxmox - MAAS - JuJu by VectOps]
+[MAAS][MAAS] is a **Metal as a Service** that allows you to treat physical servers in the Cloud like VM Instances. It turns bare metal into a flexible cloud-like resource, so there is no need to manage servers individually. For more information [MAAS Docs][MAAS Docs] **&** [Proxmox - MAAS - JuJu by VectOps][Proxmox - MAAS - JuJu by VectOps]
 
 [Proxmox-VE]:                                                    https://www.proxmox.com/
 [PVE-ISO]:                                                       https://www.proxmox.com/en/downloads/category/iso-images-pve
@@ -296,6 +339,10 @@ locals {
 [Proxmox(qm) Cloud-Init Support-Guide]:                          https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_cloud_init
 [Proxmox(qm) Cloud-Init Support-Wiki]:                           https://pve.proxmox.com/wiki/Cloud-Init_Support
 [Proxmox(qm) Cloud-Init Support FAQ-Wiki]:                       https://pve.proxmox.com/wiki/Cloud-Init_FAQ
+[Performance Tweaks]:                                            https://pve.proxmox.com/wiki/Performance_Tweaks
+[Virtio Balloon]:                                                https://rwmj.wordpress.com/2010/07/17/virtio-balloon/
+[NUMA]:                                                          https://pve.proxmox.com/wiki/NUMA
+[Hotplug]:                                                       https://pve.proxmox.com/wiki/Hotplug_(qemu_disk,nic,cpu,memory)
 [Ansible role to configure Proxmox server]:                      https://github.com/chriswayg/ansible-proxmox
 [Packer Proxmox Builder]:                                        https://www.packer.io/docs/builders/proxmox.html
 [Proxmox Web API]:                                               https://pve.proxmox.com/wiki/Proxmox_VE_API
