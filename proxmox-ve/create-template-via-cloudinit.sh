@@ -42,14 +42,25 @@ read -p "Enter number of distro to use: " OSNR
 read -p "Enter Proxmox VE Node Name: " NNAME
 
 # defaults which are used for most templates
-RESIZE=+30G
+KVM=1
+NUMA=1
+HOTPLUG=disk,network,usb,cpu,memory 
+CPUTYPE=host
+CORES=2
+SOCKETS=1
+vCPUs=2
 MEMORY=2048
 BRIDGE=vmbr0
 FIREWALL=0
-NODENAME=$NNAME
-USERCONFIG_DEFAULT=sample-cloud-init-config.yml
+AUTOSTART=1
+ONBOOT=1
+OSTYPE=l26
+DISKCACHE=none
 CITYPE=nocloud
+RESIZE=+30G
+NODENAME=$NNAME
 SNIPPETSPATH=/snippets/snippets
+USERCONFIG_DEFAULT=sample-cloud-init-config.yml
 SSHKEY_DEFAULT_CLIENT_NAME=client-id_rsa # DO NOT USE ~/.ssh/id_rsa.pub
 NOTE=""
 
@@ -192,35 +203,63 @@ esac
     && VMIMAGE=$(echo "${VMIMAGE%.*}") # remove .bz2 file extension from file name
 
 # TODO: could prompt for the VM name
-printf "\n** Creating a VM with $MEMORY MB using network bridge $BRIDGE **\n"
-qm create $VMID --name $OSNAME-cloud --memory $MEMORY --net0 virtio,bridge=$BRIDGE,firewall=$FIREWALL --agent enabled=1,fstrim_cloned_disks=1,type=virtio
+echo -e \
+      "  \033[2;32m** Creating a VM with **\033[0m\n" \
+      "  \033[1;2;34mVMID :\033[0m \033[1;33m$VMID\033[0m\n" \
+      "  \033[1;2;34mVM Name :\033[0m \033[1;33m$OSNAME-cloud-template\033[0m\n" \
+      "  \033[1;2;34mKVM Enabled :\033[0m \033[1;33m$KVM\033[0m\n" \
+      "  \033[1;2;34mNUMA Enabled :\033[0m \033[1;33m$NUMA\033[0m\n" \
+      "  \033[1;2;34mHOTPLUG :\033[0m \033[1;33m$HOTPLUG\033[0m\n" \
+      "  \033[1;2;34mCPU Type :\033[0m \033[1;33m$CPUTYPE\033[0m\n" \
+      "  \033[1;2;34mCPU Cores :\033[0m \033[1;33m$CORES\033[0m\n" \
+      "  \033[1;2;34mCPU Sockets :\033[0m \033[1;33m$SOCKETS\033[0m\n" \
+      "  \033[1;2;34mHotplugged vCPUs :\033[0m \033[1;33m$vCPUs\033[0m\n" \
+      "  \033[1;2;34mMEMORY :\033[0m \033[1;33m$MEMORY\033[0m\n" \
+      "  \033[1;2;34mNetwork :\033[0m \033[1;33mBRIDGE=$BRIDGE & FIREWALL=$FIREWALL\033[0m\n" \
+      "  \033[1;2;34mQemu Guest Agent :\033[0m \033[1;33menabled=1 & type=virtio\033[0m\n" \
+      "  \033[1;2;34mAuto Start :\033[0m \033[1;33mRestart After Crash=$AUTOSTART\033[0m\n" \
+      "  \033[1;2;34mOn Boot :\033[0m \033[1;33mVM will be started during system bootup=$ONBOOT\033[0m\n" \
+      "  \033[1;2;34mGuest OS :\033[0m \033[1;33m$OSTYPE\033[0m\n" \
+      "  \033[2;32m \033[0m\n" \
+      "  \033[2;34m \033[0m\n" \
+      "  \033[1;33m \033[0m\n"
 
-printf "\n** Importing the disk in raw format (as 'Unused Disk 0') **\n"
+qm create $VMID \
+  --name $OSNAME-cloud-template \
+  --kvm $KVM \
+  --numa $NUMA \
+  --hotplug $HOTPLUG \
+  --cpu $CPUTYPE \
+  --cores $CORES \
+  --sockets $SOCKETS \
+  --vcpus $vCPUs \
+  --memory $MEMORY \
+  --net0 virtio,bridge=$BRIDGE,firewall=$FIREWALL \
+  --agent enabled=1,fstrim_cloned_disks=1,type=virtio \
+  --autostart $AUTOSTART \
+  --onboot $ONBOOT \ 
+  --ostype $OSTYPE \
+  --description "$OSNAME-$VMIMAGE"
+
+printf "\n** \033[1;33mImporting the disk in raw format (as 'Unused Disk 0')\033[0m **\n"
 qm importdisk $VMID /tmp/$VMIMAGE local-lvm --format raw # --format qcow2
 
-printf "\n** Attaching the disk to the vm using VirtIO SCSI **\n"
-qm set $VMID --scsihw virtio-scsi-single --scsi0 local-lvm:vm-$VMID-disk-0,iothread=1
+printf "\n** \033[1;33mAttaching the disk to the VM using VirtIO SCSI Single\033[0m **\n"
+qm set $VMID --scsihw virtio-scsi-single --scsi0 local-lvm:vm-$VMID-disk-0,cache=$DISKCACHE,iothread=1
 
-printf "\n** Creating a cloudinit drive managed by Proxmox **\n"
+printf "\n** \033[1;32mCreating a cloudinit drive managed by Proxmox\033[0m **\n"
 qm set $VMID --ide2 local-lvm:cloudinit
 
-printf "\n** Setting boot and display settings with serial console **\n"
+printf "\n** \033[1;32mSpecifying the cloud-init configuration format\033[0m **\n"
+qm set $VMID --citype $CITYPE
+
+printf "\n** \033[1;33mSetting boot and display settings with serial console\033[0m **\n"
 qm set $VMID --boot c --bootdisk scsi0 --serial0 socket --vga serial0
 
-printf "\n** Using a dhcp server on $BRIDGE (or change to static IP) **\n"
+printf "\n** \033[1;33mUsing a dhcp server on $BRIDGE (or change to static IP)\033[0m **\n"
 qm set $VMID --ipconfig0 ip=dhcp
 #This would work in a bridged setup, but a routed setup requires a route to be added in the guest
 #qm set $VMID --ipconfig0 ip=10.10.10.222/24,gw=10.10.10.1
-
-printf "\n** Set CPU type **\n"
-qm set $VMID --cpu host
-
-printf "\n** Enable agent and autostart with os type **\n"
-qm set $VMID --agent enabled=1 --autostart --onboot 1 --ostype l26
-
-printf "\n** Specifying the cloud-init configuration format **\n"
-qm set $VMID --citype $CITYPE
-
 
 ## TODO: Also ask for a network configuration. Or create a config with routing for a static IP
 printf "\n*** The script can add a cloud-init configuration with users and SSH keys from a file in the current directory. ***\n"
@@ -229,13 +268,13 @@ USERCONFIG=${USERCONFIG:-$USERCONFIG_DEFAULT}
 if [[ -f $PWD/$USERCONFIG ]]
 then
     # The cloud-init user config file overrides the user settings done elsewhere
-    printf "\n** Adding user configuration **\n"
+    printf "\n** \033[1;32mAdding user configuration\033[0m **\n"
     cp -v $PWD/$USERCONFIG $SNIPPETSPATH/$VMID-$OSNAME-$USERCONFIG
     qm set $VMID --cicustom "user=snippets:snippets/$VMID-$OSNAME-$USERCONFIG"
     printf "# cloud-config: $VMID-$OSNAME-$USERCONFIG\n" >> /etc/pve/nodes/$NODENAME/qemu-server/$VMID.conf
 else
     # The SSH key should be supplied either in the cloud-init config file or here
-    printf "\n** Skipping config file, as none was found\n\n** Adding SSH key **\n"
+    printf "\n** \033[1;32mSkipping config file, as none was found\033[0m\n\n** Adding SSH key **\n"
     qm set $VMID --sshkey $SSHKEY_CLIENT
     printf "\n"
     read -s -p "Supply an optional password for the default user (press Enter for none): " PASSWORD
@@ -249,7 +288,7 @@ fi
 # The NOTE is added to the Summary section of the VM (TODO there seems to be no 'qm' command for this)
 printf "#$NOTE\n" >> /etc/pve/nodes/$NODENAME/qemu-server/$VMID.conf
 
-printf "\n** Increasing the disk size **\n"
+printf "\n** \033[1;33mIncreasing the disk size\033[0m **\n"
 qm resize $VMID scsi0 $RESIZE
 
 printf "\n*** The following cloud-init configuration will be used ***\n"
@@ -263,7 +302,7 @@ else
   qm cloudinit dump $VMID network
 fi
 
-printf "\n-------------  Convert the VM into a Template ---------------\n"
+printf "\n\033[1;33m-------------  Convert the VM into a Template ---------------\033[0m\n"
 qm template $VMID
 
 printf "\n------------- Copy downloaded Image file into Templates Folder ---------------\n"

@@ -19,9 +19,10 @@ users:
 runcmd:
   - sudo systemctl start qemu-guest-agent
   - sudo systemctl enable qemu-guest-agent
-  - sed -i -e '/^PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
-  - sed -i 's|[#]*PasswordAuthentication yes|PasswordAuthentication no|g' /etc/ssh/sshd_config
-  - sed -i 's|UsePAM yes|UsePAM no|g' /etc/ssh/sshd_config
-  - restart ssh
+  - sudo sed -i -e '/^PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
+  - sudo sed -i 's|[#]*PasswordAuthentication yes|PasswordAuthentication no|g' /etc/ssh/sshd_config
+  - sudo sed -i 's|UsePAM yes|UsePAM no|g' /etc/ssh/sshd_config
+  - sudo restart ssh
+  - sudo reboot
 final_message: "The system is finally up, after $UPTIME seconds"
 # cloud-init logs: /var/log/cloud-init.log and /var/log/cloud-init-output.log
