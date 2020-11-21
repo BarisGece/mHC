@@ -15,7 +15,7 @@ users:
     shell: /bin/bash
     sudo: ['ALL=(ALL) NOPASSWD:ALL']
     ssh_authorized_keys:
-          - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDXWn+gOcs0Qjb04yYge6vJbY6vejzoOvwLGX8x1zkmwBxB2WFaAubwj8If9Y2iSYkDMbxGWNkO63e8jyUhmhSpNhIsQlU4twhSrNZLBpQxLBon9eRN7oh0cU+W7lL7POCYMlYqgQuNJpMdU4wrOuRijLz98GSl6vA48UQa5y0efCvnXKUegR3uPxmtpr8E/nD5L8vSCM8DteCfi1dV7v9NhmcxNwK38MV0IiWB9d1hYYrZbZ80LOmHybnwHY1zs0oqy2/lyG0CuRQzsy7AdhDb7wEz1p+QksE96KAlMjDc9fjqZEwyd/Vurro/2JBRcDkb8FLS0FkgJR40IFOA3dotoIcXZe2tuaEkiFbuzEoKAQz9g5Iqdi8wnsjcI8ld598Yu6svjIDVjpec1+SG3Ipi01miGS1cqLt2n247FoyFPN2VENTEuKY4GGnsyoTXGpd35Oly+XaUyHUG599bpjXbRILA941I5hJSXoFij5eyXfg45YB5Og+xNqifraDsyeWRE51yz0+zJKNN40sOubpMjTMjekrTHgW7un9x9F+svmfQ8dQg0oyc6j8U+Hsna+htr1PAVpJ0KwG1H0HjJ03dXMV+2ixuu6J9H5nImGsxqgllqfi4Cf6amamg397IsnoAZmM02EjJpfjbpFEHdmKAq0R+t+/VekBkJkEERO0cFw== Client@VM
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDMsWy4xtV23AVHwNSZKokocJjBJQkZ6GtFKNfh5BWbfG48b0BwNS+i5fKReXOdTS1kyI+NWCZxT+9eLbF+w7dsqj1ArsZP96so22slPCv+hRmj1a84cDiglXXMzC2DuYx9Qz2q4tUWoM/GQGWrqqF/abS9QG1/a3SGg+KgCIR2gP2Iakvb/zPKKUV3CfSEm1tibu34T1+aZVjypcoFfDDDNz0eU5FBD/1puWVImZ28k8gOnFSz5Hw6Rvr/XpQW5uLj6T8bNYmMxf8hn40qzH7dQgUbP3KJVbEGTmKlREKEIFJfQyryRdYjBgA08mQo9XFNu4zcI9ruwdVYB6C9dRCFYBBwii3ddMhuhbBk5vbOdVTi1ODIT0ncFsRmtKoNYNhwMl6NZXOePxXbbj4hJuqAOeLF/DevXXFuVfvlTsfa274APyZFIBIT2WExJRKmREdItlAxH8WUk0oX3jaBT6HPGJCzn6Qgiq2LtZq79PKtn5aJjwkYFuumpbfKY2k4EE/8DakS5W3ug3GY/5AnBY+hV0QSfFP2z6xnXEOeP6p1G5zcsWsxcQb5jw+KGupueybaMIBRIPuB6kmoba2Ebk7V1pUuUFxLleB4AuOMxnVNWFE6NXIFF+h11FzIvygAsqDW7A75BXKmCvMhYOyevSHKq9KwnN6RwuE5kD5APN+Anw== Client@VM
 runcmd:
   - sudo systemctl start qemu-guest-agent
   - sudo systemctl enable qemu-guest-agent
@@ -23,20 +23,10 @@ runcmd:
   - sudo sed -i 's|[#]*PasswordAuthentication yes|PasswordAuthentication no|g' /etc/ssh/sshd_config
   - sudo sed -i 's|UsePAM yes|UsePAM no|g' /etc/ssh/sshd_config
   - sudo restart ssh
-  - sudo tee -a /etc/modules >/dev/null <<EOF
-      # extensions
-      modprobe acpiphp
-      modprobe pci_hotplug
-    EOF
-  - sudo tee -a /etc/default/grub >/dev/null <<EOF
-      # extensions
-      GRUB_CMDLINE_LINUX_DEFAULT="quiet splash memhp_default_state=online"
-    EOF
+  - echo -e 'modprobe acpiphp' | sudo tee -a /etc/modules >/dev/nul
+  - echo -e 'modprobe pci_hotplug' | sudo tee -a /etc/modules >/dev/nul
+  - sudo sed -i 's|GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"|GRUB_CMDLINE_LINUX_DEFAULT="quiet splash memhp_default_state=online"|g' /etc/default/grub
   - sudo update-grub
-  - sudo tee -a ~/test >/dev/null <<EOF
-      # extensions
-      TEST
-    EOF
 power_state:
   delay: "+30"
   mode: reboot
