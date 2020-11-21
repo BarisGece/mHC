@@ -8,10 +8,19 @@
 
 ## Table of Contents<!-- omit in toc -->
 
-- [modprobe pci_hotplug](#modprobe-pci_hotplug)
-  - [Terraform](#terraform)
-  - [MAAS](#maas)
-
+- [Proxmox-VE](#proxmox-ve)
+  - [Installation - Manual Step](#installation---manual-step)
+  - [Creating Ubuntu Image](#creating-ubuntu-image)
+  - [Installation - Script Step - Creating cloud-init Template](#installation---script-step---creating-cloud-init-template)
+  - [For Maximum Performance](#for-maximum-performance)
+- [Packer](#packer)
+  - [Installing Packer on Ubuntu Jump Server](#installing-packer-on-ubuntu-jump-server)
+  - [Preparing Proxmox-VE template via Packer](#preparing-proxmox-ve-template-via-packer)
+    - [Input Variables](#input-variables)
+    - [`local` Variables](#local-variables)
+- [Terraform](#terraform)
+- [MAAS](#maas)
+  
 ## Proxmox-VE
 
 It is an open source **Server Virtualization Platform**. [Proxmox-VE][Proxmox-VE] includes two different virtualization technologies which are **Kernel-Based Virtual Machine *(KVM)*** and **Container-Based Virtualization *(LXC)***. *Proxmox-VE* can run on a **single node**, or **assemble a cluster of many nodes**. This way, your virtual machines and containers can run on Proxmox-VE with high availability.
