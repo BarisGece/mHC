@@ -224,22 +224,7 @@ echo -e \
       "  \033[2;34m \033[0m\n" \
       "  \033[1;33m \033[0m\n"
 
-qm create $VMID \
-  --name $OSNAME-cloud-template \
-  --kvm $KVM \
-  --numa $NUMA \
-  --hotplug $HOTPLUG \
-  --cpu $CPUTYPE \
-  --cores $CORES \
-  --sockets $SOCKETS \
-  --vcpus $vCPUs \
-  --memory $MEMORY \
-  --net0 virtio,bridge=$BRIDGE,firewall=$FIREWALL \
-  --agent enabled=1,fstrim_cloned_disks=1,type=virtio \
-  --autostart $AUTOSTART \
-  --onboot $ONBOOT \ 
-  --ostype $OSTYPE \
-  --description "$OSNAME-$VMIMAGE"
+qm create $VMID --name $OSNAME-cloud-template --kvm $KVM --numa $NUMA --hotplug $HOTPLUG --cpu $CPUTYPE --cores $CORES --sockets $SOCKETS --vcpus $vCPUs --memory $MEMORY --net0 virtio,bridge=$BRIDGE,firewall=$FIREWALL --agent enabled=1,fstrim_cloned_disks=1,type=virtio --autostart $AUTOSTART --onboot $ONBOOT --ostype $OSTYPE
 
 printf "\n** \033[1;33mImporting the disk in raw format (as 'Unused Disk 0')\033[0m **\n"
 qm importdisk $VMID /tmp/$VMIMAGE local-lvm --format raw # --format qcow2
