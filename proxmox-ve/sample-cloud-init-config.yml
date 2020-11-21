@@ -19,9 +19,29 @@ users:
 runcmd:
   - sudo systemctl start qemu-guest-agent
   - sudo systemctl enable qemu-guest-agent
-  - sed -i -e '/^PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
-  - sed -i 's|[#]*PasswordAuthentication yes|PasswordAuthentication no|g' /etc/ssh/sshd_config
-  - sed -i 's|UsePAM yes|UsePAM no|g' /etc/ssh/sshd_config
-  - restart ssh
+  - sudo sed -i -e '/^PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
+  - sudo sed -i 's|[#]*PasswordAuthentication yes|PasswordAuthentication no|g' /etc/ssh/sshd_config
+  - sudo sed -i 's|UsePAM yes|UsePAM no|g' /etc/ssh/sshd_config
+  - sudo restart ssh
+  - sudo tee -a /etc/modules >/dev/null <<EOF
+      # extensions
+      modprobe acpiphp
+      modprobe pci_hotplug
+    EOF
+  - sudo tee -a /etc/default/grub >/dev/null <<EOF
+      # extensions
+      GRUB_CMDLINE_LINUX_DEFAULT="quiet splash memhp_default_state=online"
+    EOF
+  - sudo update-grub
+  - sudo tee -a ~/test >/dev/null <<EOF
+      # extensions
+      TEST
+    EOF
+power_state:
+  delay: "+30"
+  mode: reboot
+  message: Bye Bye
+  timeout: 30
+  condition: True
 final_message: "The system is finally up, after $UPTIME seconds"
 # cloud-init logs: /var/log/cloud-init.log and /var/log/cloud-init-output.log
