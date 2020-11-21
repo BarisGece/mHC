@@ -219,10 +219,7 @@ echo -e \
       "  \033[1;2;34mQemu Guest Agent :\033[0m \033[1;33menabled=1 & type=virtio\033[0m\n" \
       "  \033[1;2;34mAuto Start :\033[0m \033[1;33mRestart After Crash=$AUTOSTART\033[0m\n" \
       "  \033[1;2;34mOn Boot :\033[0m \033[1;33mVM will be started during system bootup=$ONBOOT\033[0m\n" \
-      "  \033[1;2;34mGuest OS :\033[0m \033[1;33m$OSTYPE\033[0m\n" \
-      "  \033[2;32m \033[0m\n" \
-      "  \033[2;34m \033[0m\n" \
-      "  \033[1;33m \033[0m\n"
+      "  \033[1;2;34mGuest OS :\033[0m \033[1;33m$OSTYPE\033[0m\n"
 
 qm create $VMID --name $OSNAME-cloud-template --kvm $KVM --numa $NUMA --hotplug $HOTPLUG --cpu $CPUTYPE --cores $CORES --sockets $SOCKETS --vcpus $vCPUs --memory $MEMORY --net0 virtio,bridge=$BRIDGE,firewall=$FIREWALL --agent enabled=1,fstrim_cloned_disks=1,type=virtio --autostart $AUTOSTART --onboot $ONBOOT --ostype $OSTYPE
 
