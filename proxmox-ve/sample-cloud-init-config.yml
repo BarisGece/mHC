@@ -2,11 +2,13 @@
 package_upgrade: true
 packages:
   - nmap
+  - bmon #A Powerful Network Bandwidth Monitoring and Debugging Tool for Linux
+  - atop
+  - iotop
+  - iperf3
   - curl
   - wget
   - git
-  - htop
-  - iperf3
   - fail2ban
   - qemu-guest-agent
 users:

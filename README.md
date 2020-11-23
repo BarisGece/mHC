@@ -20,6 +20,8 @@
     - [Input Variables](#input-variables)
     - [`local` Variables](#local-variables)
 - [Terraform](#terraform)
+  - [Installing Terraform on Ubuntu Jump Server](#installing-terraform-on-ubuntu-jump-server)
+  - [Creating Virtual Machine on Proxmox-VE via Terraform](#creating-virtual-machine-on-proxmox-ve-via-terraform)
 - [MAAS](#maas)
   
 ## Proxmox-VE
@@ -219,6 +221,7 @@ After installation to create cloud-init template(s) `create-template-via-cloudin
 - [Hotplug][Hotplug]
 - [pveum User Management][pveum User Management]
 - [Ansible role to configure Proxmox server][Ansible role to configure Proxmox server]
+- [Provision Proxmox VMs with Ansible, quick and easy][Provision Proxmox VMs with Ansible, quick and easy]
 
 </details>
 
@@ -309,6 +312,32 @@ locals {
 
 [Terraform][Terraform] is an **Infrastructure as Code** tool to securely and efficiently provision, manage, and version infrastructure. Having more than **1000** [Modules][Terraform Modules] and more than **200** [Providers][Terraform Providers] makes it easy to manage existing and popular infrastructure, cloud or service providers as well as *custom on-premises solutions*.
 
+The operations on ***Proxmox-VE*** are performed over ***Proxmox Web API*** as in the *Packer*. There is ***no officially supported* Proxmox Provider** on Terraform, but there are two **Community-Supported Providers** as below.
+
+- [Telmate - Terraform Proxmox Provider][Telmate - Terraform Proxmox Provider]
+- [Danitso - Terraform Proxmox Provider][Danitso - Terraform Proxmox Provider]
+
+### Installing Terraform on Ubuntu Jump Server
+
+- Add the HashiCorp GPG key.
+  - `curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -`
+- Add the official HashiCorp Linux repository.
+  - `sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"`
+- Update and install.
+  - `sudo apt-get update && sudo apt-get install terraform`
+
+### Creating Virtual Machine on Proxmox-VE via Terraform
+
+---
+
+<details>
+<summary><strong>Terraform Documents</strong></summary>
+
+- [Terraform Introduction][Terraform Introduction]
+- [Terraform Documentation][Terraform Documentation]
+
+</details>
+
 ---
 
 ## MAAS
@@ -369,7 +398,7 @@ locals {
 [Hotplug]:                                                       https://pve.proxmox.com/wiki/Hotplug_(qemu_disk,nic,cpu,memory)
 [pveum User Management]:                                         https://pve.proxmox.com/pve-docs/chapter-pveum.html
 [Ansible role to configure Proxmox server]:                      https://github.com/chriswayg/ansible-proxmox
-[Packer Proxmox Builder]:                                        https://www.packer.io/docs/builders/proxmox.html
+[Provision Proxmox VMs with Ansible, quick and easy]:            https://vectops.com/2020/01/provision-proxmox-vms-with-ansible-quick-and-easy/.packer.io/docs/builders/proxmox.html
 [Proxmox Web API]:                                               https://pve.proxmox.com/wiki/Proxmox_VE_API
 [proxmox-clone]:                                                 https://www.packer.io/docs/builders/proxmox/clone
 [proxmox-iso]:                                                   https://www.packer.io/docs/builders/proxmox/iso
@@ -384,6 +413,8 @@ locals {
 [Terraform]:                                                     https://www.terraform.io/
 [Terraform Modules]:                                             https://registry.terraform.io/
 [Terraform Providers]:                                           https://www.terraform.io/docs/providers/
+[Telmate - Terraform Proxmox Provider]:                          https://github.com/Telmate/terraform-provider-proxmox
+[Danitso - Terraform Proxmox Provider]:                          https://github.com/danitso/terraform-provider-proxmox
 [Terraform Introduction]:                                        https://www.terraform.io/intro/index.html
 [Terraform Documentation]:                                       https://www.terraform.io/docs/index.html
 [MAAS]:                                                          https://maas.io/
