@@ -21,7 +21,7 @@
     - [`local` Variables](#local-variables)
 - [Terraform](#terraform)
   - [Installing Terraform on Ubuntu Jump Server](#installing-terraform-on-ubuntu-jump-server)
-  - [Creating Virtual Machine on Proxmox-VE via Terraform](#creating-virtual-machine-on-proxmox-ve-via-terraform)
+  - [Provisioning  Virtual Machine on Proxmox-VE via Terraform](#provisioning--virtual-machine-on-proxmox-ve-via-terraform)
 - [MAAS](#maas)
   
 ## Proxmox-VE
@@ -213,6 +213,7 @@ After installation to create cloud-init template(s) `create-template-via-cloudin
 - [Proxmox(qm) Cloud-Init Support-Guide][Proxmox(qm) Cloud-Init Support-Guide]
 - [Proxmox(qm) Cloud-Init Support-Wiki][Proxmox(qm) Cloud-Init Support-Wiki]
 - [Proxmox(qm) Cloud-Init Support FAQ-Wiki][Proxmox(qm) Cloud-Init Support FAQ-Wiki]
+- [Canonical cloud-init][Canonical cloud-init]
 - [Cloud-Init-Config Sample][Cloud-Init-Config Sample]
 - [Cloud-Init-Config Documentation][Cloud-Init-Config Documentation]
 - [Performance Tweaks][Performance Tweaks]
@@ -326,7 +327,9 @@ The operations on ***Proxmox-VE*** are performed over ***Proxmox Web API*** as i
 - Update and install.
   - `sudo apt-get update && sudo apt-get install terraform`
 
-### Creating Virtual Machine on Proxmox-VE via Terraform
+### Provisioning  Virtual Machine on Proxmox-VE via Terraform
+
+**Terraform Proxmox Provider** can create **Virtual Machines(*Instances, Guest OS*)** via an **ISO** or **CLONE(*existing images*)** such as *Packer Proxmox Builder*. Cloud-init defined Proxmox-VE templates were created by `create-template-via-cloudinit.sh` & `packer_proxmox-clone`. New instances will be created using these templates. The Terraform can be found [here](./terraform).  
 
 ---
 
@@ -335,6 +338,7 @@ The operations on ***Proxmox-VE*** are performed over ***Proxmox Web API*** as i
 
 - [Terraform Introduction][Terraform Introduction]
 - [Terraform Documentation][Terraform Documentation]
+- [Terraform Proxmox Sample][Terraform Proxmox Sample]
 
 </details>
 
@@ -361,6 +365,7 @@ The operations on ***Proxmox-VE*** are performed over ***Proxmox Web API*** as i
 [Example Preseed File]:                                          https://help.ubuntu.com/lts/installation-guide/example-preseed.txt
 [Packer Preseed Ubuntu]:                                         https://www.packer.io/guides/automatic-operating-system-installs/preseed_ubuntu.html
 [Server installer plans for 20.04 LTS]:                          https://discourse.ubuntu.com/t/server-installer-plans-for-20-04-lts/13631
+[Canonical cloud-init]:                                          https://cloud-init.io/
 [Cloud-Init-Config Documentation]:                               https://cloudinit.readthedocs.io/en/latest/
 [Ubuntu Autoinstall Quick Start]:                                https://ubuntu.com/server/docs/install/autoinstall-quickstart
 [Automated Server Installs Config File Reference]:               https://ubuntu.com/server/docs/install/autoinstall-reference
@@ -417,6 +422,7 @@ The operations on ***Proxmox-VE*** are performed over ***Proxmox Web API*** as i
 [Danitso - Terraform Proxmox Provider]:                          https://github.com/danitso/terraform-provider-proxmox
 [Terraform Introduction]:                                        https://www.terraform.io/intro/index.html
 [Terraform Documentation]:                                       https://www.terraform.io/docs/index.html
+[Terraform Proxmox Sample]:                                      https://github.com/terraform-proxmox
 [MAAS]:                                                          https://maas.io/
 [MAAS Docs]:                                                     https://maas.io/docs
 [Proxmox - MAAS - JuJu by VectOps]:                              https://vectops.com/2020/02/production-ready-kubernetes-paas-in-10-steps-iaas-included/
