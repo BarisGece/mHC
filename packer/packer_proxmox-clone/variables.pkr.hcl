@@ -67,14 +67,14 @@ variable "memory" {
 variable "cores" {
   type        = number
   default     = 2
-  description = "	Available cores on the template"
+  description = "	The number of CPU cores per socket to give the template"
   sensitive   = false
 }
 
 variable "sockets" {
   type        = number
   default     = 1
-  description = "Available sockets on the template"
+  description = "The number of CPU sockets"
   sensitive   = false
 }
 
