@@ -53,7 +53,7 @@ variable "vm_name" {
 
 variable "vm_id" {
   type        = number
-  description = "ID of the Virtual Machine that will be created to configure the template"
+  description = "The (unique) ID of the Virtual Machine that will be created to configure the template"
   sensitive   = false
 }
 
