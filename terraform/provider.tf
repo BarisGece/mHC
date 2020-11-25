@@ -1,13 +1,3 @@
-terraform {
-  required_version = ">= 0.13.5"
-  required_providers {
-    proxmox = {
-      source = "Telmate/proxmox"
-      version = "2.6.5"
-    }
-  }
-}
-
 provider "proxmox" {
   pm_api_url      = var.api_url
   pm_user         = var.user
