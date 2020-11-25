@@ -341,7 +341,7 @@ The operations on ***Proxmox-VE*** are performed over ***Proxmox Web API*** as i
 - Either `clone` or `iso` **must be set** in ***resource block variables***. If both are set, the `clone` will be accepted. Therefore; ***only set one of them*** and the value of the other should be `null`.
   - Sample for **ISO**: Using an iso file uploaded on the local storage = `local:iso/proxmox-mailgateway_2.1.iso`
   - Sample for **CLONE**: The name of the Proxmox-VE template or image to be used to provision the new VM = `ubuntu2004-cloud-template`.
-- Determine whether to run a full or linked clone from the template. Default value is true. However; a full clone needs to read and copy all VM image data. This is usually much slower than creating a linked clone.
+- `full_clone`: The result of such copy is an independent VM. The new VM does not share any storage resources with the original. Default value is `true`. However; a full clone needs to read and copy all VM image data. This is usually much slower than creating a linked clone.
 
 ---
 
