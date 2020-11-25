@@ -181,6 +181,7 @@ After installation to create cloud-init template(s) `create-template-via-cloudin
       - `sudo update-grub`
     - **REBOOT Linux Guest**
     - Sample command for **hotplugging vCPUs**
+      - In Proxmox VE the ***maximal number of plugged vCPUs*** is always `cores * sockets`. Also, `Total Cores = cores * sockets`. ***vCPUs value*** can not more than ***Total Core***
       - `qm set 9000 -vcpus 4`
     - | Device | Kernel | Hotplug       | Unplug        | OS                         |
       | :----: | :----: | :-----------: | :-----------: | :------------------------: |
@@ -189,6 +190,10 @@ After installation to create cloud-init template(s) `create-template-via-cloudin
       | USB    | All    | Linux/Windows | Linux/Windows | Linux/Windows              |
       | CPU    | 3.10+  | Linux/Windows | Linux(4.10+)  | Linux/Windows Server 2008+ |
       | Memory | 3.10+  | Linux/Windows | Linux(4.10+)  | Linux/Windows Server 2008+ |
+- **Ballooning Device**
+  - Amount of target RAM for the VM in MB. Using zero disables the ballon driver. In general, you should leave **ballooning** ***enabled***, but if you want to disable it (e.g. for debugging purposes), simply ***uncheck*** **Ballooning Device** or set `balloon: 0` in the ***configuration***.
+  - Even when using a fixed memory size, the ballooning device gets added to the VM, because it delivers useful information such as how much memory the guest really uses.
+  - All Linux distributions released after **2010** have the ***balloon kernel driver included***. For Windows OSes, the balloon driver needs to be added manually and can incur a slowdown of the guest, so we don’t recommend using it on critical systems. The passing around of memory between host and guest is done via a special balloon kernel driver running inside the guest, which will grab or release memory pages from the host. A good explanation of the inner workings of the balloon driver can be found [here][Virtio Balloon]
 
 ---
 
