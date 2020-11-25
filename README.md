@@ -338,6 +338,10 @@ The operations on ***Proxmox-VE*** are performed over ***Proxmox Web API*** as i
 - `pm_user` is **required**. If `var.user` is not set, `PM_USER` must be set as the ***environment variable***.
 - `pm_password` is required. If `var.password` is not set, `PM_PASS` must be set as the ***environment variable***. One of the recommended ways to set up `PM_PASS`
 - If the **2FA OTP code** is to be used, `var.otp` must be defined. If `var.otp` is not defined, `PM_OTP` must be set as the ***environment variable***. `PM_OTP` must be set as the ***environment variable***. Also, `PM_OTP_PROMPT` can be set as ***environment variable*** to ask for ***OTP 2FA code***.
+- Either `clone` or `iso` **must be set** in ***resource block variables***. If both are set, the `clone` will be accepted. Therefore; ***only set one of them*** and the value of the other should be `null`.
+  - Sample for **ISO**: Using an iso file uploaded on the local storage = `local:iso/proxmox-mailgateway_2.1.iso`
+  - Sample for **CLONE**: The name of the Proxmox-VE template or image to be used to provision the new VM = `ubuntu2004-cloud-template`.
+- Determine whether to run a full or linked clone from the template. Default value is true. However; a full clone needs to read and copy all VM image data. This is usually much slower than creating a linked clone.
 
 ---
 
