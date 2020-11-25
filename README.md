@@ -22,6 +22,7 @@
 - [Terraform](#terraform)
   - [Installing Terraform on Ubuntu Jump Server](#installing-terraform-on-ubuntu-jump-server)
   - [Provisioning  Virtual Machine on Proxmox-VE via Terraform](#provisioning--virtual-machine-on-proxmox-ve-via-terraform)
+    - [Terraform Proxmox Provider Variables](#terraform-proxmox-provider-variables)
 - [MAAS](#maas)
   
 ## Proxmox-VE
@@ -329,7 +330,14 @@ The operations on ***Proxmox-VE*** are performed over ***Proxmox Web API*** as i
 
 ### Provisioning  Virtual Machine on Proxmox-VE via Terraform
 
-**Terraform Proxmox Provider** can create **Virtual Machines(*Instances, Guest OS*)** via an **ISO** or **CLONE(*existing images*)** such as *Packer Proxmox Builder*. Cloud-init defined Proxmox-VE templates were created by `create-template-via-cloudinit.sh` & `packer_proxmox-clone`. New instances will be created using these templates. The Terraform can be found [here](./terraform).  
+**Terraform Proxmox Provider** can create **Virtual Machines(*Instances, Guest OS*)** via an **ISO** or **CLONE(*existing images*)** such as *Packer Proxmox Builder*. Cloud-init defined Proxmox-VE templates were created by `create-template-via-cloudinit.sh` & `packer_proxmox-clone`. New instances will be created using these templates. The Terraform can be found [here](./terraform).
+
+#### Terraform Proxmox Provider Variables
+
+- `pm_api_url` is **required**. If `var.api_url` is not set, `PM_API_URL` must be set as the ***environment variable***.
+- `pm_user` is **required**. If `var.user` is not set, `PM_USER` must be set as the ***environment variable***.
+- `pm_password` is required. If `var.password` is not set, `PM_PASS` must be set as the ***environment variable***. One of the recommended ways to set up `PM_PASS`
+- If the **2FA OTP code** is to be used, `var.otp` must be defined. If `var.otp` is not defined, `PM_OTP` must be set as the ***environment variable***. `PM_OTP` must be set as the ***environment variable***. Also, `PM_OTP_PROMPT` can be set as ***environment variable*** to ask for ***OTP 2FA code***.
 
 ---
 
