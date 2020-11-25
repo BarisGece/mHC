@@ -6,7 +6,7 @@
 variable "api_url" {
   description = "This is the target Proxmox API endpoint. REQURIED(or use environment variable PM_API_URL)"
   type        = string
-  default     = null
+  default     = "https://proxmox.example.com:8006/api2/json"
 }
 
 variable "user" {
@@ -35,7 +35,7 @@ variable "tls_insecure" {
 
 variable "parallel" {
   description = "Allowed simultaneous Proxmox processes(e.g. creating resources). Default 4"
-  type        = string
+  type        = number
   default     = null
 }
 
@@ -55,4 +55,16 @@ variable "log_levels" {
     _default    = "debug"
     _capturelog = ""
   }
+}
+
+variable "log_file" {
+  description = "If logging is enabled, the log file the provider will write logs to. Default terraform-plugin-proxmox.log"
+  type        = string
+  default     = "terraform-proxmox.log"
+}
+
+variable "timeout" {
+  description = "Timeout value (seconds) for proxmox API calls. Default 300"
+  type        = number
+  default     = 600
 }
