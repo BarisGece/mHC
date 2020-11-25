@@ -147,69 +147,75 @@ variable "full_clone" {
 }
 
 variable "hastate" {
-  description = "Optional"
+  description = "HA, you need to use a shared disk for this feature (ex: rbd)"
   type        = string
   default     = null
 }
 
 variable "qemu_os" {
-  description = "Defaults to l26"
+  description = "Specify guest operating system. This is used to enable special optimization/features for specific operating systems. Default: l26"
   type        = string
   default     = "l26"
 }
 
 variable "memory" {
-  description = "Defaults to 512"
+  description = "Amount of RAM for the VM in MB. This is the maximum available memory when you use the balloon device. Default: 512"
   type        = number
   default     = 512
 }
 
 variable "balloon" {
-  description = "Defaults to 0"
+  description = "Amount of target RAM for the VM in MB. Using 0 disables the ballon driver. Default: 0"
   type        = number
-  default     = 0
+  default     = 1
 }
 
 variable "cores" {
-  description = "Defaults to 1"
+  description = "The number of CPU cores per socket to give the VM. Default: 1"
   type        = number
   default     = 1
 }
 
 variable "sockets" {
-  description = "Defaults to 1"
+  description = "The number of CPU sockets. Default: 1"
   type        = number
   default     = 1
 }
 
 variable "vcpus" {
-  description = "Defaults to 1"
+  description = "Number of hotplugged vCPUs. Default: 0"
   type        = number
   default     = 1
 }
 
 variable "cpu" {
-  description = "Defaults to host"
+  description = "Emulated CPU type. For best performance(homogeneous cluster where all nodes have the same CPU), set this to host. Default: host"
   type        = string
   default     = "host"
 }
 
 variable "numa" {
-  description = "Defaults to false"
+  description = "Enable/disable NUMA. Default: false"
   type        = bool
-  default     = false
+  default     = true
+}
+
+variable "kvm" {
+  description = "Enable/disable KVM hardware virtualization. Default: true"
+  type        = bool
+  default     = true
 }
 
 variable "hotplug" {
-  description = "Defaults to network,disk,usb"
+  description = "Selectively enable hotplug features. This is a comma separated list of hotplug features: network, disk, cpu, memory and usb. Default: network,disk,usb"
   type        = string
-  default     = "network,disk,usb"
+  default     = "disk,network,usb,cpu,memory "
 }
 
 variable "scsihw" {
-  description = "Defaults to the empty string"
+  description = "SCSI controller model. (lsi | lsi53c810 | megasas | pvscsi | virtio-scsi-pci | virtio-scsi-single)"
   type        = string
-  default     = null
+  default     = "virtio-scsi-single"
 }
 
 variable "vga" {
