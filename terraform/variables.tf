@@ -4,19 +4,19 @@
 #########################################################################
 
 variable "api_url" {
-  description = "This is the target Proxmox API endpoint. REQURIED(or use environment variable PM_API_URL)"
+  description = "This is the target Proxmox API endpoint. REQUIRED(or use environment variable PM_API_URL)"
   type        = string
   default     = "https://proxmox.example.com:8006/api2/json"
 }
 
 variable "user" {
-  description = "The Proxmox User. REQURIED(or use environment variable PM_USER)"
+  description = "The Proxmox User. REQUIRED(or use environment variable PM_USER)"
   type        = string
   default     = "terraform@pam"
 }
 
 variable "password" {
-  description = "The Proxmox User Password. REQURIED(or use environment variable PM_PASS)"
+  description = "The Proxmox User Password. REQUIRED(or use environment variable PM_PASS)"
   type        = string
   default     = null
 }
@@ -28,19 +28,19 @@ variable "otp" {
 }
 
 variable "tls_insecure" {
-  description = " Disable TLS verification while connecting"
+  description = "Disable TLS verification while connecting. Default: false"
   type        = string
   default     = true
 }
 
 variable "parallel" {
-  description = "Allowed simultaneous Proxmox processes(e.g. creating resources). Default 4"
+  description = "Allowed simultaneous Proxmox processes(e.g. creating resources). Default: 4"
   type        = number
   default     = null
 }
 
 variable "log_enable" {
-  description = "Enable debug logging, see the section below for logging details. Default false"
+  description = "Enable debug logging, see the section below for logging details. Default: false"
   type        = string
   default     = true
 }
@@ -58,13 +58,13 @@ variable "log_levels" {
 }
 
 variable "log_file" {
-  description = "If logging is enabled, the log file the provider will write logs to. Default terraform-plugin-proxmox.log"
+  description = "If logging is enabled, the log file the provider will write logs to. Default: terraform-plugin-proxmox.log"
   type        = string
   default     = "terraform-proxmox.log"
 }
 
 variable "timeout" {
-  description = "Timeout value (seconds) for proxmox API calls. Default 300"
+  description = "Timeout value (seconds) for proxmox API calls. Default: 300"
   type        = number
   default     = 600
 }
@@ -75,73 +75,73 @@ variable "timeout" {
 #########################################################################
 
 variable "name" {
-  description = "Name of the VM"
+  description = "Name of the VM. REQUIRED"
   type        = string
   default     = null
 }
 
 variable "target_node" {
-  description = "Node to place the VM on"
+  description = "Target Proxmox-VE Node to place the VM on. REQUIRED"
   type        = string
   default     = null
 }
 
 variable "vmid" {
-  description = "ID of the VM in Proxmox, defaults to next number in the sequence"
-  type        = string
-  default     = null
+  description = "The (unique) ID of the VM in Proxmox. Default: next number in the sequence"
+  type        = number
+  default     = 1000
 }
 
 variable "desc" {
-  description = "Description of the VM"
+  description = "Description for the VM. Only used on the configuration web interface. This is saved as comment inside the configuration file"
   type        = string
   default     = null
 }
 
 variable "bios" {
-  description = "Defaults to seabios"
+  description = "Select BIOS implementation(ovmf | seabios). Default: seabios"
   type        = string
   default     = "seabios"
 }
 
 variable "onboot" {
-  description = "Defaults to true"
+  description = "Specifies whether a VM will be started during system bootup. Default: true"
   type        = bool
   default     = true
 }
 
 variable "boot" {
-  description = "Defaults to cdn"
+  description = "Boot on floppy (a), hard disk (c), CD-ROM (d), or network (n). Default: cdn"
   type        = string
   default     = "cdn"
 }
 
 variable "bootdisk" {
-  description = "Defaults to true"
+  description = "Enable booting from specified disk(ide|sata|scsi|virtio)\\d+. Sample: scsi0 or virtio0"
   type        = string
-  default     = "true"
+  default     = "scsi0"
 }
 
 variable "agent" {
-  description = "Defaults to 0"
+  description = "Enables QEMU Agent option for this VM.  When 1, then qemu-guest-agent must be installed on the guest. Default: 0"
   type        = number
   default     = 1
 }
 
 variable "iso" {
-  description = "Optional"
+  description = "ISO file uploaded on the Proxmox-VE storage. Set only ISO or CLONE. Sample: local:iso/proxmox-mailgateway_2.1.iso"
   type        = string
   default     = null
 }
 
 variable "clone" {
-  description = "Optional"
+  description = "The name of the Proxmox-VE Template. It will be used to provision a new VM by Terraform"
   type        = string
   default     = null
 }
 
 variable "full_clone" {
-  description = "Optional"
+  description = "Whether to run a full or linked clone from the template. Default: true"
   type        = bool
   default     = true
 }
