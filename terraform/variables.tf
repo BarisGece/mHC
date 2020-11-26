@@ -218,8 +218,12 @@ variable "scsihw" {
   default     = "virtio-scsi-single"
 }
 
+/*
+ ** memory : Sets the VGA memory (in MiB). Has no effect with serial display. (4 - 512)
+ ** type   : Set he VGA type. Default: std. (cirrus | none | qxl | qxl2 | qxl3 | qxl4 | serial0 | serial1 | serial2 | serial3 | std | virtio | vmware)
+*/
 variable "vga" {
-  description = "(optional)"
+  description = "Configure the VGA Hardware. Default(for type): std" 
   type = object({
     type   = string
     memory = number
@@ -227,17 +231,37 @@ variable "vga" {
   default = null
 }
 
+/*
+  ** name     :
+  ** bridge   :
+  ** firewall :
+  ** gw       :
+  ** gw6      :
+  ** hwaddr   :
+  ** ip       :
+  ** ip6      :
+  ** mtu      :
+  ** rate     :
+  ** tag      :
+  ** trunks   :
+  ** type     :
+*/
 variable "network" {
   description = "(optional)"
   type = list(object({
-    model     = string
-    macaddr   = string
-    bridge    = string
-    tag       = number
-    firewall  = bool
-    rate      = number
-    queues    = number
-    link_down = bool
+    name     = string
+    bridge   = string
+    firewall = bool
+    gw       = string
+    gw6      = string
+    hwaddr   = string
+    ip       = string
+    ip6      = string
+    mtu      = string
+    rate     = number
+    tag      = number
+    trunks   = string
+    type     = string
   }))
   default = [
     {
