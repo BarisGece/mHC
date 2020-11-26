@@ -232,36 +232,28 @@ variable "vga" {
 }
 
 /*
-  ** name     :
-  ** bridge   :
-  ** firewall :
-  ** gw       :
-  ** gw6      :
-  ** hwaddr   :
-  ** ip       :
-  ** ip6      :
-  ** mtu      :
-  ** rate     :
-  ** tag      :
-  ** trunks   :
-  ** type     :
+  ** model     : Network Card Model. The virtio model provides the best performance with very low CPU overhead
+               : If your guest does not support this driver, it is usually best to use e1000
+               : (e1000 | e1000-82540em | e1000-82544gc | e1000-82545em | i82551 | i82557b | i82559er | ne2k_isa | ne2k_pci | pcnet | rtl8139 | virtio | vmxnet3)
+  ** macaddr   : A common MAC address with the I/G (Individual/Group) bit not set
+  ** bridge    : Bridge to attach the network device to. The Proxmox VE standard bridge is called vmbr0
+  ** tag       : VLAN tag to apply to packets on this interface
+  ** firewall  : Whether this interface should be protected by the firewall
+  ** rate      : Rate limit in mbps (megabytes per second) as floating point number
+  ** queues    : Number of packet queues to be used on the device
+  ** link_down : Whether this interface should be disconnected (like pulling the plug)
 */
 variable "network" {
-  description = "(optional)"
+  description = "Specify network devices"
   type = list(object({
-    name     = string
-    bridge   = string
-    firewall = bool
-    gw       = string
-    gw6      = string
-    hwaddr   = string
-    ip       = string
-    ip6      = string
-    mtu      = string
-    rate     = number
-    tag      = number
-    trunks   = string
-    type     = string
+    model      = string
+    macaddr    = string
+    bridge     = string
+    tag        = number
+    firewall   = bool
+    rate       = number
+    queues     = number
+    link_down  = bool
   }))
   default = [
     {
@@ -269,7 +261,7 @@ variable "network" {
       macaddr   = null
       bridge    = "vmbr0"
       tag       = null
-      firewall  = null
+      firewall  = false
       rate      = null
       queues    = null
       link_down = null
