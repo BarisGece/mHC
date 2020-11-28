@@ -51,10 +51,7 @@ variable "log_levels" {
     _default    = string
     _capturelog = string
   }))
-  default = {
-    _default    = "debug"
-    _capturelog = ""
-  }
+  default = {}
 }
 
 variable "log_file" {
