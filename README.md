@@ -355,7 +355,6 @@ The operations on ***Proxmox-VE*** are performed over ***Proxmox Web API*** as i
 
 - [Terraform Introduction][Terraform Introduction]
 - [Terraform Documentation][Terraform Documentation]
-- [Terraform Proxmox Sample][Terraform Proxmox Sample]
 - [Telmate - Provider Block Arguments][Telmate - Provider Block Arguments]
 - [Telmate - VM Qemu Resource][Telmate - VM Qemu Resource]
 - [Telmate - Cloud Init Guide][Telmate - Cloud Init Guide]
@@ -442,7 +441,6 @@ The operations on ***Proxmox-VE*** are performed over ***Proxmox Web API*** as i
 [Danitso - Terraform Proxmox Provider]:                          https://github.com/danitso/terraform-provider-proxmox
 [Terraform Introduction]:                                        https://www.terraform.io/intro/index.html
 [Terraform Documentation]:                                       https://www.terraform.io/docs/index.html
-[Terraform Proxmox Sample]:                                      https://github.com/terraform-proxmox
 [Telmate - Provider Block Arguments]:                            https://github.com/Telmate/terraform-provider-proxmox/blob/master/docs/index.md
 [Telmate - VM Qemu Resource]:                                    https://github.com/Telmate/terraform-provider-proxmox/blob/master/docs/resources/vm_qemu.md
 [Telmate - Cloud Init Guide]:                                    https://github.com/Telmate/terraform-provider-proxmox/blob/master/docs/guides/cloud_init.md
