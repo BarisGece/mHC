@@ -71,6 +71,12 @@ variable "timeout" {
 # ** Resource Block **
 #########################################################################################
 
+variable "create_vm" {
+  description = "Check for VM Creation"
+  type        = bool
+  default     = true
+}
+
 variable "name" {
   description = "Name of the VM. REQUIRED"
   type        = string
