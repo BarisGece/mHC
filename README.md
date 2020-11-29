@@ -22,6 +22,7 @@
 - [Terraform](#terraform)
   - [Installing Terraform on Ubuntu Jump Server](#installing-terraform-on-ubuntu-jump-server)
   - [Provisioning  Virtual Machine on Proxmox-VE via Terraform](#provisioning--virtual-machine-on-proxmox-ve-via-terraform)
+    - [Terraform Input Variables](#terraform-input-variables)
     - [Terraform Proxmox Provider Variables](#terraform-proxmox-provider-variables)
 - [MAAS](#maas)
   
@@ -336,6 +337,16 @@ The operations on ***Proxmox-VE*** are performed over ***Proxmox Web API*** as i
 ### Provisioning  Virtual Machine on Proxmox-VE via Terraform
 
 **Terraform Proxmox Provider** can create **Virtual Machines(*Instances, Guest OS*)** via an **ISO** or **CLONE(*existing images*)** such as *Packer Proxmox Builder*. Cloud-init defined Proxmox-VE templates were created by `create-template-via-cloudinit.sh` & `packer_proxmox-clone`. New instances will be created using these templates. The Terraform can be found [here](./terraform).
+
+#### Terraform Input Variables
+
+The same variable cannot be assigned multiple values ​​within a single resource, so variables are loaded in the following order and subsequent resources override previous values.
+
+- **Environment variables**
+- The `terraform.tfvars` file
+- The `terraform.tfvars.json` file
+- Any `*.auto.tfvars` or `*.auto.tfvars.json` files, *execution order is by file names*
+- Any `-var` and `-var-file` options on the command line, *in the order they are provided*
 
 #### Terraform Proxmox Provider Variables
 
